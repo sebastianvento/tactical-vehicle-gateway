@@ -1,0 +1,26 @@
+# Qt Creator & Build artifacts
+*.user
+*.user.*
+build/
+*-build-*
+*build-*
+*.o
+*.obj
+*.app
+*.moc
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+Makefile*
+*.pro.user
+
+# C++ objects and libs
+*.so
+*.dylib
+*.dll
+*.a
+
+# macOS specific
+.DS_Store
+.AppleDouble
