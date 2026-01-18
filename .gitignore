@@ -1,26 +1,37 @@
-# Qt Creator & Build artifacts
+# === IDE & Local Settings ===
 *.user
 *.user.*
+.qtcreator/
+.qmake.stash
+*.pro.user
+
+# === Build Artifacts ===
 build/
+build-*/
 *-build-*
 *build-*
 *.o
 *.obj
-*.app
-*.moc
-moc_*.cpp
-moc_*.h
-qrc_*.cpp
-ui_*.h
-Makefile*
-*.pro.user
-
-# C++ objects and libs
 *.so
 *.dylib
 *.dll
 *.a
+*.lib
+*.exe
+*.app
+Makefile*
 
-# macOS specific
+# === Qt Generated Source ===
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+*.moc
+
+# === OS & IDE Junk ===
 .DS_Store
+.DS_Store?
+._*
 .AppleDouble
+.vscode/
+.idea/
