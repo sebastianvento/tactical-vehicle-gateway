@@ -76,7 +76,7 @@ private slots:
     void sortByPriorityDesc();
 
     // --- Simulation & Background Tasks ---
-    void updateSimulation();        ///< Periodic update for dynamic asset data
+    void onSimulationTick();        ///< Periodic update for dynamic asset data
 
 private:
     // --- Backend Data Controllers ---

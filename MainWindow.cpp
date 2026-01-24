@@ -339,7 +339,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
 
     // Simulation Heartbeat
     simTimer = new QTimer(this);
-    connect(simTimer, &QTimer::timeout, this, &MainWindow::updateSimulation);
+    connect(simTimer, &QTimer::timeout, this, &MainWindow::onSimulationTick);
     simTimer->start(1000);
 }
 
@@ -693,7 +693,7 @@ void MainWindow::fuelInputMaxChanged(const QString &fuelString) {
  * Math and simulation logic for real-time asset tracking.
  */
 
-void MainWindow::updateSimulation() {
+void MainWindow::onSimulationTick() {
     const double targetX = targetXLine->text().toDouble();
     const double targetY = targetYLine->text().toDouble();
     controller->updateSimulation(targetX, targetY);
