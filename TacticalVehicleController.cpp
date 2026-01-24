@@ -7,126 +7,123 @@ TacticalVehicleController::TacticalVehicleController(TacticalVehicleData& data)
 }
 
 void TacticalVehicleController::applyFilter(
-    QCheckBox* cbHasSatCom,
-    QCheckBox* cbIsAmphibious,
-    QCheckBox* cbIsUnmanned,
-    QCheckBox* cbHasActiveDefense,
-    QPushButton* callsignSelectionPressed_Btn,
-    QPushButton* trackIdSelectionPressed_Btn,
-    QPushButton* domainButtonSelectionPressed_Btn,
-    QPushButton* propulsionSelectionPressed_Btn,
-    QPushButton* prioritySelectionPressed_Btn,
-    QPushButton* protectionSelectionMinPressed_Btn,
-    QPushButton* protectionSelectionMaxPressed_Btn,
-    QCheckBox* affiliationButtonPlaceholder, // intentionally unused for now
+    bool hasSatCom,
+    bool isAmphibious,
+    bool isUnmanned,
+    bool hasActiveDefense,
+
+    bool callsignActive,
+    const QString& callsign,
+
+    bool trackIdActive,
+    const QString& trackId,
+
+    bool domainActive,
+    const QString& domain,
+
+    bool propulsionActive,
+    const QString& propulsion,
+
+    bool priorityActive,
+    const QString& priority,
+
+    bool protectionMinActive,
+    int protectionMin,
+
+    bool protectionMaxActive,
+    int protectionMax,
+
     int fuelMin,
     int fuelMax,
+
     int distanceMin,
     int distanceMax,
-    const QString& affiliationText
+
+    const QString& affiliation
     )
 {
-    Q_UNUSED(affiliationButtonPlaceholder);
-
     filteredVehicles.clear();
 
     for (const auto& vehicle : data.allVehicles) {
 
         bool capabilityMatch = true;
-        bool callsignMatch = false;
-        bool trackIdMatch = false;
-        bool domainMatch = false;
-        bool propulsionMatch = false;
-        bool priorityMatch = false;
-        bool protectionMatchMin = false;
-        bool protectionMatchMax = false;
-        bool fuelMatchMin = false;
-        bool fuelMatchMax = false;
-        bool distanceMatchMin = false;
-        bool distanceMatchMax = false;
-        bool affiliationMatch = false;
+        bool callsignMatch = true;
+        bool trackIdMatch = true;
+        bool domainMatch = true;
+        bool propulsionMatch = true;
+        bool priorityMatch = true;
+        bool protectionMatchMin = true;
+        bool protectionMatchMax = true;
+        bool fuelMatchMin = true;
+        bool fuelMatchMax = true;
+        bool distanceMatchMin = true;
+        bool distanceMatchMax = true;
+        bool affiliationMatch = true;
 
-        // --- 1. Capabilities (Strict "AND" Logic) ---
-        if (cbHasSatCom->isChecked() && !vehicle.hasSatCom) {
+        // --- 1. Capabilities (Strict AND Logic) ---
+        if (hasSatCom && !vehicle.hasSatCom) {
             capabilityMatch = false;
         }
-        if (cbIsAmphibious->isChecked() && !vehicle.isAmphibious) {
+        if (isAmphibious && !vehicle.isAmphibious) {
             capabilityMatch = false;
         }
-        if (cbIsUnmanned->isChecked() && !vehicle.isUnmanned) {
+        if (isUnmanned && !vehicle.isUnmanned) {
             capabilityMatch = false;
         }
-        if (cbHasActiveDefense->isChecked() && !vehicle.hasActiveDefense) {
+        if (hasActiveDefense && !vehicle.hasActiveDefense) {
             capabilityMatch = false;
         }
 
         // --- 2. Identity ---
-        if (callsignSelectionPressed_Btn->isVisible()) {
-            callsignMatch = (vehicle.callsign == callsignSelectionPressed_Btn->text());
-        } else {
-            callsignMatch = true;
+        if (callsignActive && vehicle.callsign != callsign) {
+            callsignMatch = false;
         }
 
-        if (trackIdSelectionPressed_Btn->isVisible()) {
-            trackIdMatch = (vehicle.trackId == trackIdSelectionPressed_Btn->text());
-        } else {
-            trackIdMatch = true;
+        if (trackIdActive && vehicle.trackId != trackId) {
+            trackIdMatch = false;
         }
 
         // --- 3. Strategic Classifications ---
-        if (domainButtonSelectionPressed_Btn->isVisible()) {
-            domainMatch = (vehicle.domain == domainButtonSelectionPressed_Btn->text());
-        } else {
-            domainMatch = true;
+        if (domainActive && vehicle.domain != domain) {
+            domainMatch = false;
         }
 
-        if (propulsionSelectionPressed_Btn->isVisible()) {
-            propulsionMatch = (vehicle.propulsion == propulsionSelectionPressed_Btn->text());
-        } else {
-            propulsionMatch = true;
+        if (propulsionActive && vehicle.propulsion != propulsion) {
+            propulsionMatch = false;
         }
 
-        if (prioritySelectionPressed_Btn->isVisible()) {
-            priorityMatch = (vehicle.priority == prioritySelectionPressed_Btn->text());
-        } else {
-            priorityMatch = true;
+        if (priorityActive && vehicle.priority != priority) {
+            priorityMatch = false;
         }
 
         // --- 4. Protection Levels ---
-        if (protectionSelectionMinPressed_Btn->isVisible()) {
-            protectionMatchMin = (vehicle.protectionLevel >= protectionSelectionMinPressed_Btn->text().toInt());
-        } else {
-            protectionMatchMin = true;
+        if (protectionMinActive && vehicle.protectionLevel < protectionMin) {
+            protectionMatchMin = false;
         }
 
-        if (protectionSelectionMaxPressed_Btn->isVisible()) {
-            protectionMatchMax = (vehicle.protectionLevel <= protectionSelectionMaxPressed_Btn->text().toInt());
-        } else {
-            protectionMatchMax = true;
+        if (protectionMaxActive && vehicle.protectionLevel > protectionMax) {
+            protectionMatchMax = false;
         }
 
         // --- 5. Telemetry Ranges ---
-        if (vehicle.fuelLevel >= fuelMin) {
-            fuelMatchMin = true;
+        if (vehicle.fuelLevel < fuelMin) {
+            fuelMatchMin = false;
         }
-        if (vehicle.fuelLevel <= fuelMax) {
-            fuelMatchMax = true;
+        if (vehicle.fuelLevel > fuelMax) {
+            fuelMatchMax = false;
         }
 
-        if (vehicle.distanceToTarget >= distanceMin) {
-            distanceMatchMin = true;
+        if (vehicle.distanceToTarget < distanceMin) {
+            distanceMatchMin = false;
         }
-        if (distanceMax >= 10000) {
-            distanceMatchMax = true;
-        }
-        else if (vehicle.distanceToTarget <= distanceMax) {
-            distanceMatchMax = true;
+        if (distanceMax < 10000 && vehicle.distanceToTarget > distanceMax) {
+            distanceMatchMax = false;
         }
 
         // --- 6. Affiliation ---
-        if (affiliationText == "All Types" ||
-            vehicle.affiliation == affiliationText) {
-            affiliationMatch = true;
+        if (affiliation != "All Types" &&
+            vehicle.affiliation != affiliation) {
+            affiliationMatch = false;
         }
 
         // --- FINAL EVALUATION ---
@@ -148,6 +145,7 @@ void TacticalVehicleController::applyFilter(
         }
     }
 }
+
 
 void TacticalVehicleController::updateSimulation(double targetX, double targetY)
 {

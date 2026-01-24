@@ -23,23 +23,39 @@ public:
     // Computes filteredVehicles based on current UI state.
     // Does NOT update UI and does NOT own presentation logic.
     void applyFilter(
-        QCheckBox* cbHasSatCom,
-        QCheckBox* cbIsAmphibious,
-        QCheckBox* cbIsUnmanned,
-        QCheckBox* cbHasActiveDefense,
-        QPushButton* callsignSelectionPressed_Btn,
-        QPushButton* trackIdSelectionPressed_Btn,
-        QPushButton* domainButtonSelectionPressed_Btn,
-        QPushButton* propulsionSelectionPressed_Btn,
-        QPushButton* prioritySelectionPressed_Btn,
-        QPushButton* protectionSelectionMinPressed_Btn,
-        QPushButton* protectionSelectionMaxPressed_Btn,
-        QCheckBox* affiliationButtonPlaceholder, // will be removed later
+        bool hasSatCom,
+        bool isAmphibious,
+        bool isUnmanned,
+        bool hasActiveDefense,
+
+        bool callsignActive,
+        const QString& callsign,
+
+        bool trackIdActive,
+        const QString& trackId,
+
+        bool domainActive,
+        const QString& domain,
+
+        bool propulsionActive,
+        const QString& propulsion,
+
+        bool priorityActive,
+        const QString& priority,
+
+        bool protectionMinActive,
+        int protectionMin,
+
+        bool protectionMaxActive,
+        int protectionMax,
+
         int fuelMin,
         int fuelMax,
+
         int distanceMin,
         int distanceMax,
-        const QString& affiliationText
+
+        const QString& affiliation
         );
     void updateSimulation(double targetX, double targetY);
 

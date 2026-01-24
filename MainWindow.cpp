@@ -349,24 +349,40 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
  */
 void MainWindow::filterFunction() {
     controller->applyFilter(
-        cbHasSatCom,
-        cbIsAmphibious,
-        cbIsUnmanned,
-        cbHasActiveDefense,
-        callsignSelectionPressed_Btn,
-        trackIdSelectionPressed_Btn,
-        domainButtonSelectionPressed_Btn,
-        propulsionSelectionPressed_Btn,
-        prioritySelectionPressed_Btn,
-        protectionSelectionMinPressed_Btn,
-        protectionSelectionMaxPressed_Btn,
-        nullptr,
+        cbHasSatCom->isChecked(),
+        cbIsAmphibious->isChecked(),
+        cbIsUnmanned->isChecked(),
+        cbHasActiveDefense->isChecked(),
+
+        callsignSelectionPressed_Btn->isVisible(),
+        callsignSelectionPressed_Btn->text(),
+
+        trackIdSelectionPressed_Btn->isVisible(),
+        trackIdSelectionPressed_Btn->text(),
+
+        domainButtonSelectionPressed_Btn->isVisible(),
+        domainButtonSelectionPressed_Btn->text(),
+
+        propulsionSelectionPressed_Btn->isVisible(),
+        propulsionSelectionPressed_Btn->text(),
+
+        prioritySelectionPressed_Btn->isVisible(),
+        prioritySelectionPressed_Btn->text(),
+
+        protectionSelectionMinPressed_Btn->isVisible(),
+        protectionSelectionMinPressed_Btn->text().toInt(),
+
+        protectionSelectionMaxPressed_Btn->isVisible(),
+        protectionSelectionMaxPressed_Btn->text().toInt(),
+
         fuelSlider->lowerValue(),
         fuelSlider->upperValue(),
+
         distanceSlider->lowerValue(),
         distanceSlider->upperValue(),
+
         affiliationButton->text()
-        );
+    );
 
     /*filteredVehicles.clear();
     for (const auto& vehicle : data.allVehicles) {
@@ -821,36 +837,16 @@ void MainWindow::fuelInputMaxChanged(const QString &fuelString) {
  * Math and simulation logic for real-time asset tracking.
  */
 
-double MainWindow::calculateDistance(double vehX, double vehY) const {
-    double targetX = targetXLine->text().toDouble();
-    double targetY = targetYLine->text().toDouble();
-    double dx = targetX - vehX;
-    double dy = targetY - vehY;
-    return std::sqrt(dx*dx + dy*dy);
-}
-
 void MainWindow::updateSimulation() {
     const double targetX = targetXLine->text().toDouble();
     const double targetY = targetYLine->text().toDouble();
-
     controller->updateSimulation(targetX, targetY);
-
-    /*const double PI_CONST = 3.14159265358979323846;
-    for (auto& v : tacticalVehicleDb->allVehicles) {
-        const double currentSpeed = v.speed;
-        const double rad = (v.heading - 90.0) * (PI_CONST / 180.0);
-        const double distPerSecond = currentSpeed / 3.6;
-        v.posX += distPerSecond * cos(rad);
-        v.posY += distPerSecond * sin(rad);
-        v.distanceToTarget = calculateDistance(v.posX, v.posY);
-    }*/
 }
 
 /**
  * @section SORTING_METHODS
  * Handlers for organizing asset lists by various metrics.
  */
-
 void MainWindow::updateSortStatus() {
     printList();
     QString buttonText = sortButton->text();
