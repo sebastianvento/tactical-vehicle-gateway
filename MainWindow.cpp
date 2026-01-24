@@ -849,7 +849,7 @@ void MainWindow::displayButtonClicked() {
     manualUpdateRequested = true;
     filterFunction();
     printList();
-    sortByPriorityDesc();
+    sortByDistanceAsc();
     manualUpdateRequested = false;
     sortButton->setText("Sort");
 }
