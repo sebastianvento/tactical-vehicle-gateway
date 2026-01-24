@@ -6,7 +6,8 @@
 /**
  * @struct TacticalVehicle
  * @brief Represents a single unit within the Tactical Vehicle Gateway.
- * * This structure holds static identity markers, technical specifications,
+ *
+ * This structure holds static identity markers, technical specifications,
  * and dynamic telemetry data used for real-time simulation and filtering.
  */
 struct TacticalVehicle {

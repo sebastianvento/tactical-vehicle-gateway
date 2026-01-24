@@ -4,7 +4,6 @@
 #include <QJsonObject>
 #include <QFile>
 #include <QDebug>
-#include <utility>
 
 /**
  * @class TacticalVehicleData
@@ -89,7 +88,8 @@ void TacticalVehicleData::loadVehiclesFromJson(const QString &path) {
 }
 
 // --- Static Sorting Predicates ---
-// These predicates are used by std::sort to arrange the filteredVehicles pointer vector.
+// These predicates are used by std::sort to arrange both filtered
+// pointer views and the master vehicle container via adapters.
 
 // Distance Sorting
 bool TacticalVehicleData::sortByDistanceAsc(const TacticalVehicle* a, const TacticalVehicle* b) {
@@ -109,7 +109,7 @@ bool TacticalVehicleData::sortByFuelDesc(const TacticalVehicle* a, const Tactica
     return a->fuelLevel > b->fuelLevel;
 }
 
-// Strategic Prioriy Sorting
+// Strategic Priority Sorting
 bool TacticalVehicleData::sortByPriorityAsc(const TacticalVehicle* a, const TacticalVehicle* b) {
     return a->priority < b->priority;
 }

@@ -2,15 +2,15 @@
 #define TACTICALVEHICLEDATA_H
 
 #include "TacticalVehicle.h"
-#include <vector>
 #include <deque>
 #include <QString>
 
 /**
  * @class TacticalVehicleData
- * @brief Controller class for managing tactical vehicle datasets.
- * * This class handles the persistence (JSON loading) and provides static
- * comparison logic for sorting both the master and filtered vehicle collections.
+ * @brief Data model and persistence layer for tactical vehicle datasets.
+ *
+ * Owns the master vehicle container, handles JSON loading, and provides
+ * stateless comparison predicates for sorting derived views.
  */
 class TacticalVehicleData {
 public:
@@ -22,7 +22,8 @@ public:
     std::deque<TacticalVehicle> allVehicles;
 
     // --- Persistence & I/O ---
-    /** * @brief Parses vehicle data from a JSON resource.
+    /**
+     * @brief Parses vehicle data from a JSON resource.
      * @param path The file path or Qt resource path (e.g., ":/data/vehicles.json").
      */
     void loadVehiclesFromJson(const QString &path);

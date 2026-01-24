@@ -1,7 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "TacticalVehicle.h"
 #include "TacticalVehicleController.h"
 #include <QWidget>
 #include <vector>
@@ -139,19 +138,8 @@ private:
     QPushButton *trackIdSelectionPressed_Btn;
 
     // --- Information Display & Labels ---
-    QLabel *labelActiveDefense;
-    QLabel *labelAmphibious;
-    QLabel *labelCapabilities;
-    QLabel *labelDistance;
-    QLabel *labelDomain;
-    QLabel *labelFuel;
-    QLabel *labelIdentity;
     QLabel *labelLogo;
-    QLabel *labelPriority;
-    QLabel *labelProtection;
-    QLabel *labelSatCom;
     QLabel *labelTrackId;
-    QLabel *labelUnmanned;
     QListWidget *resultsList;
 
     // --- Internal Mathematical Helpers ---

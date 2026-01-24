@@ -1,11 +1,27 @@
 #include "TacticalVehicleController.h"
 #include "TacticalVehicleData.h"
 
+#include <cmath>
+
+/**
+ * @brief TacticalVehicleController Constructor
+ * Binds the controller to the shared TacticalVehicleData store.
+ * The controller operates on data but owns no UI state.
+ */
 TacticalVehicleController::TacticalVehicleController(TacticalVehicleData& data)
     : data(data)
 {
 }
 
+/**
+ * @section FILTERING_LOGIC
+ * Core engine for evaluating tactical vehicle data against
+ * UI-provided filter criteria.
+ *
+ * This function is intentionally UI-agnostic: all visual state
+ * (visibility, selections, ranges) is resolved by MainWindow
+ * before being passed here as primitive values.
+ */
 void TacticalVehicleController::applyFilter(
     bool hasSatCom,
     bool isAmphibious,
@@ -46,21 +62,22 @@ void TacticalVehicleController::applyFilter(
 
     for (const auto& vehicle : data.allVehicles) {
 
-        bool capabilityMatch = true;
-        bool callsignMatch = true;
-        bool trackIdMatch = true;
-        bool domainMatch = true;
-        bool propulsionMatch = true;
-        bool priorityMatch = true;
-        bool protectionMatchMin = true;
-        bool protectionMatchMax = true;
-        bool fuelMatchMin = true;
-        bool fuelMatchMax = true;
-        bool distanceMatchMin = true;
-        bool distanceMatchMax = true;
-        bool affiliationMatch = true;
+        // Default to permissive matching; constraints narrow results
+        bool capabilityMatch     = true;
+        bool callsignMatch       = true;
+        bool trackIdMatch        = true;
+        bool domainMatch         = true;
+        bool propulsionMatch     = true;
+        bool priorityMatch       = true;
+        bool protectionMatchMin  = true;
+        bool protectionMatchMax  = true;
+        bool fuelMatchMin        = true;
+        bool fuelMatchMax        = true;
+        bool distanceMatchMin    = true;
+        bool distanceMatchMax    = true;
+        bool affiliationMatch    = true;
 
-        // --- 1. Capabilities (Strict AND Logic) ---
+        // --- 1. Operational Capabilities (Strict AND Logic) ---
         if (hasSatCom && !vehicle.hasSatCom) {
             capabilityMatch = false;
         }
@@ -74,7 +91,7 @@ void TacticalVehicleController::applyFilter(
             capabilityMatch = false;
         }
 
-        // --- 2. Identity ---
+        // --- 2. Identity Filters ---
         if (callsignActive && vehicle.callsign != callsign) {
             callsignMatch = false;
         }
@@ -83,7 +100,7 @@ void TacticalVehicleController::applyFilter(
             trackIdMatch = false;
         }
 
-        // --- 3. Strategic Classifications ---
+        // --- 3. Strategic Classification ---
         if (domainActive && vehicle.domain != domain) {
             domainMatch = false;
         }
@@ -96,7 +113,7 @@ void TacticalVehicleController::applyFilter(
             priorityMatch = false;
         }
 
-        // --- 4. Protection Levels ---
+        // --- 4. Protection Constraints ---
         if (protectionMinActive && vehicle.protectionLevel < protectionMin) {
             protectionMatchMin = false;
         }
@@ -146,19 +163,31 @@ void TacticalVehicleController::applyFilter(
     }
 }
 
-
+/**
+ * @section SIMULATION_LOGIC
+ * Advances vehicle positions and recalculates distances
+ * relative to the current mission target.
+ *
+ * This function operates exclusively on model data and is
+ * triggered externally by a timed heartbeat (QTimer).
+ */
 void TacticalVehicleController::updateSimulation(double targetX, double targetY)
 {
-    const double PI_CONST = 3.14159265358979323846;
+    constexpr double PI_CONST = 3.14159265358979323846;
 
     for (auto& v : data.allVehicles) {
-        const double currentSpeed = v.speed;
-        const double rad = (v.heading - 90.0) * (PI_CONST / 180.0);
-        const double distPerSecond = currentSpeed / 3.6;
 
+        // Convert heading to radians (UI uses degrees)
+        const double rad = (v.heading - 90.0) * (PI_CONST / 180.0);
+
+        // Speed conversion: km/h -> m/s
+        const double distPerSecond = v.speed / 3.6;
+
+        // Integrate position
         v.posX += distPerSecond * std::cos(rad);
         v.posY += distPerSecond * std::sin(rad);
 
+        // Update target-relative distance
         const double dx = targetX - v.posX;
         const double dy = targetY - v.posY;
         v.distanceToTarget = std::sqrt(dx * dx + dy * dy);
