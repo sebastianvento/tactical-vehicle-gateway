@@ -692,7 +692,6 @@ void MainWindow::fuelInputMaxChanged(const QString &fuelString) {
  * @section OPERATIONAL_LOGIC
  * Math and simulation logic for real-time asset tracking.
  */
-
 void MainWindow::onSimulationTick() {
     const double targetX = targetXLine->text().toDouble();
     const double targetY = targetYLine->text().toDouble();
@@ -844,7 +843,6 @@ void MainWindow::sortByDistanceDesc() {
  * @section DISPLAY_AND_OUTPUT
  * Functions responsible for rendering data to the user interface.
  */
-
 void MainWindow::displayButtonClicked() {
     manualUpdateRequested = true;
     filterFunction();
@@ -922,6 +920,5 @@ void MainWindow::printList() {
     }
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
 }

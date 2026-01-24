@@ -12,7 +12,8 @@
  * Owns the master vehicle container, handles JSON loading, and provides
  * stateless comparison predicates for sorting derived views.
  */
-class TacticalVehicleData {
+class TacticalVehicleData
+{
 public:
     // --- Lifecycle ---
     TacticalVehicleData();

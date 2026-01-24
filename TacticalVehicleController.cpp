@@ -8,9 +8,7 @@
  * Binds the controller to the shared TacticalVehicleData store.
  * The controller operates on data but owns no UI state.
  */
-TacticalVehicleController::TacticalVehicleController(TacticalVehicleData& data)
-    : data(data)
-{
+TacticalVehicleController::TacticalVehicleController(TacticalVehicleData& data) : data(data) {
 }
 
 /**
