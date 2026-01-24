@@ -271,44 +271,44 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     // --- 6. SIGNAL & SLOT CONNECTIONS ---
 
     // Capability Toggles
-    connect(cbHasSatCom, SIGNAL(toggled(bool)), this, SLOT(filterFunction()));
-    connect(cbIsAmphibious, SIGNAL(toggled(bool)), this, SLOT(filterFunction()));
-    connect(cbIsUnmanned, SIGNAL(toggled(bool)), this, SLOT(filterFunction()));
-    connect(cbHasActiveDefense, SIGNAL(toggled(bool)), this, SLOT(filterFunction()));
+    connect(cbHasSatCom, &QCheckBox::toggled, this, &MainWindow::filterFunction);
+    connect(cbIsAmphibious, &QCheckBox::toggled, this, &MainWindow::filterFunction);
+    connect(cbIsUnmanned, &QCheckBox::toggled, this, &MainWindow::filterFunction);
+    connect(cbHasActiveDefense, &QCheckBox::toggled, this, &MainWindow::filterFunction);
 
     // Search & Selection
-    connect(callsignLine, SIGNAL(textChanged(const QString&)), this, SLOT(callsignChanged(const QString&)));
-    connect(callsignLine, SIGNAL(returnPressed()), this, SLOT(callsignReturnPressed()));
-    connect(callsignSelectionPressed_Btn, SIGNAL(clicked()), this, SLOT(callsignSelectionPressed()));
-    connect(trackIdLine, SIGNAL(textChanged(const QString&)), this, SLOT(trackIdChanged(const QString&)));
-    connect(trackIdLine, SIGNAL(returnPressed()), this, SLOT(trackIdReturnPressed()));
-    connect(trackIdSelectionPressed_Btn, SIGNAL(clicked()), this, SLOT(trackIdSelectionPressed()));
+    connect(callsignLine, &QLineEdit::textChanged, this, &MainWindow::callsignChanged);
+    connect(callsignLine, &QLineEdit::returnPressed, this, &MainWindow::callsignReturnPressed);
+    connect(callsignSelectionPressed_Btn, &QPushButton::clicked, this, &MainWindow::callsignSelectionPressed);
+    connect(trackIdLine, &QLineEdit::textChanged, this, &MainWindow::trackIdChanged);
+    connect(trackIdLine, &QLineEdit::returnPressed, this, &MainWindow::trackIdReturnPressed);
+    connect(trackIdSelectionPressed_Btn, &QPushButton::clicked, this, &MainWindow::trackIdSelectionPressed);
 
     // Strategic Menus
-    connect(affiliationMenu, SIGNAL(triggered(QAction*)), this, SLOT(affiliationActionClicked(QAction*)));
-    connect(domainMenu, SIGNAL(triggered(QAction*)), this, SLOT(domainActionClicked(QAction*)));
-    connect(domainButtonSelectionPressed_Btn, SIGNAL(clicked()), this, SLOT(domainSelectionPressed()));
-    connect(propulsionMenu, SIGNAL(triggered(QAction*)), this, SLOT(propulsionActionClicked(QAction*)));
-    connect(propulsionSelectionPressed_Btn, SIGNAL(clicked()), this, SLOT(propulsionSelectionPressed()));
-    connect(priorityMenu, SIGNAL(triggered(QAction*)), this, SLOT(priorityActionClicked(QAction*)));
-    connect(prioritySelectionPressed_Btn, SIGNAL(clicked()), this, SLOT(prioritySelectionPressed()));
-    connect(protectionMenuMin, SIGNAL(triggered(QAction*)), this, SLOT(protectionMenuMinClicked(QAction*)));
-    connect(protectionMenuMax, SIGNAL(triggered(QAction*)), this, SLOT(protectionMenuMaxClicked(QAction*)));
-    connect(protectionSelectionMinPressed_Btn, SIGNAL(clicked()), this, SLOT(protectionSelectionMinPressed()));
-    connect(protectionSelectionMaxPressed_Btn, SIGNAL(clicked()), this, SLOT(protectionSelectionMaxPressed()));
+    connect(affiliationMenu, &QMenu::triggered, this, &MainWindow::affiliationActionClicked);
+    connect(domainMenu, &QMenu::triggered, this, &MainWindow::domainActionClicked);
+    connect(domainButtonSelectionPressed_Btn, &QPushButton::clicked, this, &MainWindow::domainSelectionPressed);
+    connect(propulsionMenu, &QMenu::triggered, this, &MainWindow::propulsionActionClicked);
+    connect(propulsionSelectionPressed_Btn, &QPushButton::clicked, this, &MainWindow::propulsionSelectionPressed);
+    connect(priorityMenu, &QMenu::triggered, this, &MainWindow::priorityActionClicked);
+    connect(prioritySelectionPressed_Btn, &QPushButton::clicked, this, &MainWindow::prioritySelectionPressed);
+    connect(protectionMenuMin, &QMenu::triggered, this, &MainWindow::protectionMenuMinClicked);
+    connect(protectionMenuMax, &QMenu::triggered, this, &MainWindow::protectionMenuMaxClicked);
+    connect(protectionSelectionMinPressed_Btn, &QPushButton::clicked, this, &MainWindow::protectionSelectionMinPressed);
+    connect(protectionSelectionMaxPressed_Btn, &QPushButton::clicked, this, &MainWindow::protectionSelectionMaxPressed);
 
     // Range Sliders & Inputs
-    connect(fuelSlider, SIGNAL(valuesChanged(int, int)), this, SLOT(fuelSliderChanged(int, int)));
-    connect(fuelInputMin, SIGNAL(textChanged(const QString&)), this, SLOT(fuelInputMinChanged(const QString&)));
-    connect(fuelInputMax, SIGNAL(textChanged(const QString&)), this, SLOT(fuelInputMaxChanged(const QString&)));
-    connect(distanceSlider, SIGNAL(valuesChanged(int, int)), this, SLOT(distanceSliderChanged(int, int)));
-    connect(distanceInputMin, SIGNAL(textChanged(const QString&)), this, SLOT(distanceInputMinChanged(const QString&)));
-    connect(distanceInputMax, SIGNAL(textChanged(const QString&)), this, SLOT(distanceInputMaxChanged(const QString&)));
-    connect(targetXLine, SIGNAL(textChanged(const QString&)), this, SLOT(filterFunction()));
-    connect(targetYLine, SIGNAL(textChanged(const QString&)), this, SLOT(filterFunction()));
+    connect(fuelSlider, &RangeSlider::valuesChanged, this, &MainWindow::fuelSliderChanged);
+    connect(fuelInputMin, &QLineEdit::textChanged, this, &MainWindow::fuelInputMinChanged);
+    connect(fuelInputMax, &QLineEdit::textChanged, this, &MainWindow::fuelInputMaxChanged);
+    connect(distanceSlider, &RangeSlider::valuesChanged, this, &MainWindow::distanceSliderChanged);
+    connect(distanceInputMin, &QLineEdit::textChanged, this, &MainWindow::distanceInputMinChanged);
+    connect(distanceInputMax, &QLineEdit::textChanged, this, &MainWindow::distanceInputMaxChanged);
+    connect(targetXLine, &QLineEdit::textChanged, this, &MainWindow::filterFunction);
+    connect(targetYLine, &QLineEdit::textChanged, this, &MainWindow::filterFunction);
 
     // Sorting & Application Actions
-    connect(displayButton, SIGNAL(clicked()), this, SLOT(displayButtonClicked()));
+    connect(displayButton, &QPushButton::clicked, this, &MainWindow::displayButtonClicked);
     connect(actionDistAsc, &QAction::triggered, this, &MainWindow::sortByDistanceAsc);
     connect(actionDistDesc, &QAction::triggered, this, &MainWindow::sortByDistanceDesc);
     connect(actionFuelAsc, &QAction::triggered, this, &MainWindow::sortByFuelAsc);
