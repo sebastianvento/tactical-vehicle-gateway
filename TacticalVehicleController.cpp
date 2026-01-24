@@ -148,3 +148,21 @@ void TacticalVehicleController::applyFilter(
         }
     }
 }
+
+void TacticalVehicleController::updateSimulation(double targetX, double targetY)
+{
+    const double PI_CONST = 3.14159265358979323846;
+
+    for (auto& v : data.allVehicles) {
+        const double currentSpeed = v.speed;
+        const double rad = (v.heading - 90.0) * (PI_CONST / 180.0);
+        const double distPerSecond = currentSpeed / 3.6;
+
+        v.posX += distPerSecond * std::cos(rad);
+        v.posY += distPerSecond * std::sin(rad);
+
+        const double dx = targetX - v.posX;
+        const double dy = targetY - v.posY;
+        v.distanceToTarget = std::sqrt(dx * dx + dy * dy);
+    }
+}

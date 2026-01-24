@@ -830,7 +830,12 @@ double MainWindow::calculateDistance(double vehX, double vehY) const {
 }
 
 void MainWindow::updateSimulation() {
-    const double PI_CONST = 3.14159265358979323846;
+    const double targetX = targetXLine->text().toDouble();
+    const double targetY = targetYLine->text().toDouble();
+
+    controller->updateSimulation(targetX, targetY);
+
+    /*const double PI_CONST = 3.14159265358979323846;
     for (auto& v : tacticalVehicleDb->allVehicles) {
         const double currentSpeed = v.speed;
         const double rad = (v.heading - 90.0) * (PI_CONST / 180.0);
@@ -838,7 +843,7 @@ void MainWindow::updateSimulation() {
         v.posX += distPerSecond * cos(rad);
         v.posY += distPerSecond * sin(rad);
         v.distanceToTarget = calculateDistance(v.posX, v.posY);
-    }
+    }*/
 }
 
 /**

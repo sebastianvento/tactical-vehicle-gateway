@@ -20,6 +20,8 @@ class TacticalVehicleController
 public:
     explicit TacticalVehicleController(TacticalVehicleData& data);
     std::vector<const TacticalVehicle*> filteredVehicles;
+    // Computes filteredVehicles based on current UI state.
+    // Does NOT update UI and does NOT own presentation logic.
     void applyFilter(
         QCheckBox* cbHasSatCom,
         QCheckBox* cbIsAmphibious,
@@ -39,6 +41,7 @@ public:
         int distanceMax,
         const QString& affiliationText
         );
+    void updateSimulation(double targetX, double targetY);
 
 private:
     TacticalVehicleData& data;
