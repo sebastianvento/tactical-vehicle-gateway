@@ -13,7 +13,6 @@ SOURCES += \
     main.cpp
 
 HEADERS += \
-    FilterCriteria.h \
     MainWindow.h \
     RangeSlider.h \
     TacticalVehicle.h \

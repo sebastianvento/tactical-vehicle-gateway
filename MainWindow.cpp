@@ -1,7 +1,6 @@
 #include "MainWindow.h"
 #include "TacticalVehicleData.h"
 #include "RangeSlider.h"
-#include "FilterCriteria.h"
 #include <QApplication>
 #include <QObject>
 #include <QPushButton>
@@ -213,7 +212,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
         "QPushButton:pressed { background-color: #111c26; }"
         );
 
-    QPushButton* exitButton = new QPushButton("EXIT SYSTEM");
+    QPushButton *exitButton = new QPushButton("EXIT SYSTEM");
     exitButton->setMinimumHeight(50);
     exitButton->setStyleSheet(
         "QPushButton { background-color: #2a2a2a; color: #cc5555; border: 1px solid #444; } "
