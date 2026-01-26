@@ -149,8 +149,8 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     // Section: Protection Level
     QGroupBox *protGroup = new QGroupBox("Protection Level (STANAG 4569)");
     QHBoxLayout *protLayout = new QHBoxLayout();
-    protectionButtonMin = new QPushButton("Min level");
-    protectionButtonMax = new QPushButton("Max level");
+    protectionButtonMin = new QPushButton("Min Level");
+    protectionButtonMax = new QPushButton("Max Level");
     protectionMenuMin = new QMenu(this);
     protectionMenuMax = new QMenu(this);
     for (int lvl = 1; lvl <= 6; ++lvl) {
@@ -346,7 +346,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     simTimer->start(1000);
 }
 
-// --- FILTERING LOGIC ---
+// --- Filtering Logic ---
 // Resolves UI state into filter criteria and delegates evaluation to the controller.
 void MainWindow::filterFunction() {
     FilterCriteria criteria;
@@ -404,7 +404,7 @@ void MainWindow::filterFunction() {
     }
 }
 
-// --- UI INPUT LOGIC ---
+// --- UI Input Logic ---
 // Slots responsible for translating direct user interaction into UI state changes.
 void MainWindow::callsignChanged(const QString &callsignText) {
     QString callsignFormatted = callsignText;
@@ -487,7 +487,7 @@ void MainWindow::domainActionClicked(QAction* action) {
 
 void MainWindow::domainSelectionPressed() {
     domainButtonSelectionPressed_Btn->setVisible(false);
-    domainButton->setText("Domain");
+    domainButton->setText("Select Domain");
     filterFunction();
 }
 
@@ -507,7 +507,7 @@ void MainWindow::propulsionActionClicked(QAction* action) {
 
 void MainWindow::propulsionSelectionPressed() {
     propulsionSelectionPressed_Btn->setVisible(false);
-    propulsionButton->setText("Propulsion");
+    propulsionButton->setText("Select Propulsion");
     filterFunction();
 }
 
@@ -527,7 +527,7 @@ void MainWindow::priorityActionClicked(QAction* action){
 
 void MainWindow::prioritySelectionPressed() {
     prioritySelectionPressed_Btn->setVisible(false);
-    priorityButton->setText("Priority");
+    priorityButton->setText("Set Priority");
     filterFunction();
 }
 
@@ -676,7 +676,7 @@ void MainWindow::fuelInputMaxChanged(const QString &fuelString) {
     filterFunction();
 }
 
-// --- SIMULATION LOGIC ---
+// --- Simulation Logic ---
 // Triggers controller-side simulation updates based on current UI target state.
 void MainWindow::onSimulationTick() {
     const double targetX = targetXLine->text().toDouble();
@@ -684,7 +684,7 @@ void MainWindow::onSimulationTick() {
     controller->updateSimulation(targetX, targetY);
 }
 
-// --- SORTING LOGIC ---
+// --- Sorting Logic ---
 // UI-driven handlers for ordering asset views by operational metrics.
 void MainWindow::updateSortStatus() {
     printList();
@@ -707,7 +707,7 @@ void MainWindow::sortByFuelAsc() {
         std::sort(av.begin(), av.end(), [](const auto& a, const auto& b) { return TacticalVehicleData::sortByFuelAsc(&a, &b); });
         filterFunction();
     }
-    sortButton->setText("Fuel: Critical first");
+    sortButton->setText("Fuel: Critical First");
     manualUpdateRequested = true;
     updateSortStatus();
 }
@@ -724,7 +724,7 @@ void MainWindow::sortByFuelDesc() {
         std::sort(av.begin(), av.end(), [](const auto& a, const auto& b) { return TacticalVehicleData::sortByFuelDesc(&a, &b); });
         filterFunction();
     }
-    sortButton->setText("Fuel: Full first");
+    sortButton->setText("Fuel: Full First");
     manualUpdateRequested = true;
     updateSortStatus();
 }
@@ -809,7 +809,7 @@ void MainWindow::sortByDistanceAsc() {
         std::sort(av.begin(), av.end(), [](const auto& a, const auto& b) { return TacticalVehicleData::sortByDistanceAsc(&a, &b); });
         filterFunction();
     }
-    sortButton->setText("Distance: Closest first");
+    sortButton->setText("Distance: Closest First");
     manualUpdateRequested = true;
     updateSortStatus();
 }
@@ -826,13 +826,15 @@ void MainWindow::sortByDistanceDesc() {
         std::sort(av.begin(), av.end(), [](const auto& a, const auto& b) { return TacticalVehicleData::sortByDistanceDesc(&a, &b); });
         filterFunction();
     }
-    sortButton->setText("Distance: Farthest first");
+    sortButton->setText("Distance: Farthest First");
     manualUpdateRequested = true;
     updateSortStatus();
 }
 
-// --- DISPLAY LOGIC ---
+// --- Display Logic  ---
 // Functions responsible for rendering data to the user interface.
+
+// Displays results and applies default distance-based ordering.
 void MainWindow::displayButtonClicked() {
     manualUpdateRequested = true;
     filterFunction();
@@ -899,4 +901,5 @@ void MainWindow::printList() {
 }
 
 MainWindow::~MainWindow() {
+    // Default cleanup handled by Qt parent–child ownership.
 }

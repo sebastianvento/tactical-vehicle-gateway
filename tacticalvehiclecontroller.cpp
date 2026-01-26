@@ -11,7 +11,7 @@
 TacticalVehicleController::TacticalVehicleController(TacticalVehicleData& data) : data(data) {
 }
 
-// --- FILTERING LOGIC ---
+// --- Filtering Logic ---
 // Core engine for evaluating tactical vehicle data against
 // UI-provided filter criteria.
 
@@ -125,7 +125,7 @@ void TacticalVehicleController::applyFilter(const FilterCriteria& criteria) {
 }
 
 /**
- * @brief Indicates whether filtering currently affects the displayed result set.
+ * @brief Indicates whether filtering currently affects the result set by comparing size.
  *
  * This function defines "filter active" in an outcome-based sense:
  * it returns true when the filtered view differs from the full vehicle dataset.
@@ -142,7 +142,7 @@ bool TacticalVehicleController::isFilterActive() const {
     return filteredVehicles.size() != data.vehicles().size();
 }
 
-// --- SIMULATION LOGIC ---
+// --- Simulation Logic ---
 // Advances vehicle positions and recalculates distances
 // relative to the current mission target.
 

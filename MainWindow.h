@@ -98,7 +98,7 @@ private:
     QStringList trackIdList;
     QStringList callsignList;
 
-    bool manualUpdateRequested = false; ///< Guards programmatic vs UI-triggered refresh
+    bool manualUpdateRequested = false; ///< Guards explicit list rendering phases
 
     // --- Capability Flags ---
     QCheckBox *cbHasActiveDefense;
@@ -171,4 +171,3 @@ private:
 };
 
 #endif // MAINWINDOW_H
-

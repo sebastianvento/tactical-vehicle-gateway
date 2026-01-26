@@ -2,16 +2,14 @@
 #define TACTICALVEHICLEDATA_H
 
 #include "TacticalVehicle.h"
-#include <deque>
+
 #include <QString>
 
-/**
- * @class TacticalVehicleData
- * @brief Data model and persistence layer for tactical vehicle datasets.
- *
- * Owns the authoritative vehicle container, handles JSON-based ingestion,
- * and provides stateless comparison predicates for sorting derived views.
- */
+#include <deque>
+
+// --- TacticalVehicleData Implementation ---
+// Owns the persistent tactical dataset and provides JSON ingestion,
+// controlled container access, and stateless sorting predicates.
 class TacticalVehicleData {
 public:
     // --- Lifecycle ---
@@ -53,6 +51,3 @@ private:
 };
 
 #endif // TACTICALVEHICLEDATA_H
-
-
-

@@ -3,7 +3,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 
-// Rendering and interaction logic for the RangeSlider widget.
+// --- Rendering & Interaction ---
 // Implements custom painting, mouse interaction, and value-to-pixel mapping
 
 // --- Lifecycle ---
@@ -14,6 +14,9 @@ RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent) {
     // Default logical range (0–100)
     m_minimumRange = 0;
     m_maximumRange = 100;
+
+    // Default visual preset for the slider handles.
+    // Logical range remains 0–100; initial selection is narrowed for usability.
     m_lowerValue = 20;
     m_upperValue = 80;
 }

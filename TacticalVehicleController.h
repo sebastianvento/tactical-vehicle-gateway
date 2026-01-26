@@ -1,8 +1,9 @@
 #ifndef TACTICALVEHICLECONTROLLER_H
 #define TACTICALVEHICLECONTROLLER_H
 
-#include <vector>
 #include <QString>
+
+#include <vector>
 
 class TacticalVehicleData;
 struct TacticalVehicle;
@@ -49,6 +50,9 @@ struct FilterCriteria {
     int fuelMin = 0;
     int fuelMax = 100;
 
+    // NOTE: distanceMax == 10000 is intentionally treated as "no upper bound".
+    // This is a UI-driven convention used to expose all entities when the
+    // distance slider is at its maximum. This is a deliberate, controlled shortcut.
     int distanceMin = 0;
     int distanceMax = 10000;
 
@@ -85,4 +89,3 @@ private:
 };
 
 #endif // TACTICALVEHICLECONTROLLER_H
-
