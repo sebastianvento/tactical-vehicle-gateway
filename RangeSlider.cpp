@@ -1,10 +1,12 @@
 #include "RangeSlider.h"
+
 #include <QPainter>
 #include <QMouseEvent>
 
 /**
- * @class RangeSlider
- * @brief Implementation of a custom dual-handle slider for range selection.
+ * @brief Rendering and interaction logic for the RangeSlider widget.
+ *
+ * Implements custom painting, mouse interaction, and value-to-pixel mapping.
  */
 
 // --- Lifecycle ---
@@ -13,7 +15,7 @@ RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent) {
     // Enable mouse tracking to capture movement immediately upon click
     setMouseTracking(true);
 
-    // Default tactical ranges (0-100%)
+    // Default logical range (0–100)
     m_minimumRange = 0;
     m_maximumRange = 100;
     m_lowerValue = 20;
@@ -44,7 +46,7 @@ void RangeSlider::setValues(int min, int max) {
     update();
 }
 
-// --- Interaction & Rendering ---
+// --- Rendering ---
 
 void RangeSlider::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event);
@@ -77,7 +79,7 @@ void RangeSlider::mousePressEvent(QMouseEvent *event) {
     const int posUpper = valueToPosition(m_upperValue);
     const int hitTolerance = 20; // Hitbox radius in pixels
 
-    // Identify which handle is being targeted (priority to lower if overlapping)
+    // Determine active handle (lower handle takes precedence on overlap)
     if (qAbs(mouseX - posLower) < hitTolerance) {
         m_isDraggingLower = true;
         setCursor(Qt::ClosedHandCursor);
@@ -86,6 +88,8 @@ void RangeSlider::mousePressEvent(QMouseEvent *event) {
         setCursor(Qt::ClosedHandCursor);
     }
 }
+
+// --- Mouse Interaction ---
 
 void RangeSlider::mouseMoveEvent(QMouseEvent *event) {
     const int currentVal = positionToValue(event->pos().x());

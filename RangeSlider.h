@@ -4,8 +4,11 @@
 #include <QWidget>
 
 /**
- * @brief Custom dual-handle range selector widget.
- * Allows users to define a minimum and maximum boundary within a set range.
+ * @class RangeSlider
+ * @brief Dual-handle range selector widget.
+ *
+ * Provides an interactive control for selecting a minimum and maximum
+ * value within a bounded numeric range.
  */
 class RangeSlider : public QWidget
 {
@@ -18,36 +21,38 @@ public:
     void setRange(int min, int max);
     void setValues(int min, int max);
 
-    // --- Data Access ---
+    // --- Value Access ---
     int lowerValue() const { return m_lowerValue; }
     int upperValue() const { return m_upperValue; }
 
 signals:
-    /** @brief Emitted whenever the lower or upper handle position changes. */
+    /**
+     * @brief Emitted when either handle position changes.
+     * @param min Current lower bound value
+     * @param max Current upper bound value
+     */
     void valuesChanged(int min, int max);
 
 protected:
-    // --- UI Interaction & Rendering ---
+    // --- Rendering & Interaction ---
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
-    // --- State Variables ---
+    // --- Range State ---
     int m_minimumRange = 0;
     int m_maximumRange = 100;
-    int m_lowerValue = 0;
-    int m_upperValue = 100;
+    int m_lowerValue   = 0;
+    int m_upperValue   = 100;
 
-    // --- Interaction Logic ---
+    // --- Interaction State ---
     bool m_isDraggingLower = false;
     bool m_isDraggingUpper = false;
 
-    /** @brief Maps logical data values to pixel coordinates on the widget. */
+    // --- Coordinate Mapping ---
     int valueToPosition(int value);
-
-    /** @brief Maps mouse pixel coordinates back to logical data values. */
     int positionToValue(int position);
 };
 

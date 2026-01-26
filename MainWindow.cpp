@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include "TacticalVehicleData.h"
 #include "RangeSlider.h"
+
 #include <QApplication>
 #include <QObject>
 #include <QPushButton>
@@ -21,22 +22,25 @@
 #include <QGroupBox>
 #include <QTimer>
 #include <QDoubleValidator>
+
 #include <vector>
 #include <algorithm>
 
 /**
- * @brief MainWindow Constructor
- * Organizes the tactical gateway UI into logical functional blocks.
+ * @brief Constructs and wires the main tactical gateway UI.
+ *
+ * Responsible for:
+ *  - Initializing core data and controller objects
+ *  - Building the full UI layout hierarchy
+ *  - Connecting UI state to filtering, sorting, and simulation logic
  */
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
-
     // --- 1. DATA & CORE INITIALIZATION ---
     tacticalVehicleDb = std::make_unique<TacticalVehicleData>();
     controller = std::make_unique<TacticalVehicleController>(*tacticalVehicleDb);
     tacticalVehicleDb->loadVehiclesFromJson(":/data/vehicles.json");
     choiceDeletion = QIcon::fromTheme(QIcon::ThemeIcon::WindowClose);
 
-    // Initial Window Constraints
     setMinimumSize(1000, 720);
     this->resize(1000, 750);
 
@@ -344,22 +348,25 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
 
 /**
  * @section FILTERING_LOGIC
- * Core engine for processing vehicle data based on UI criteria.
+ * Resolves UI state into filter criteria and delegates evaluation to the controller.
  */
 void MainWindow::filterFunction() {
     FilterCriteria criteria;
 
+    // --- Capability Flags ---
     criteria.hasSatCom = cbHasSatCom->isChecked();
     criteria.isAmphibious = cbIsAmphibious->isChecked();
     criteria.isUnmanned = cbIsUnmanned->isChecked();
     criteria.hasActiveDefense = cbHasActiveDefense->isChecked();
 
+    // --- Identity Filters ---
     criteria.callsignActive = callsignSelectionPressed_Btn->isVisible();
     criteria.callsign = callsignSelectionPressed_Btn->text();
 
     criteria.trackIdActive = trackIdSelectionPressed_Btn->isVisible();
     criteria.trackId = trackIdSelectionPressed_Btn->text();
 
+    // --- Strategic Classification ---
     criteria.domainActive = domainButtonSelectionPressed_Btn->isVisible();
     criteria.domain = domainButtonSelectionPressed_Btn->text();
 
@@ -369,18 +376,20 @@ void MainWindow::filterFunction() {
     criteria.priorityActive = prioritySelectionPressed_Btn->isVisible();
     criteria.priority = prioritySelectionPressed_Btn->text();
 
+    // --- Protection Constraints ---
     criteria.protectionMinActive = protectionSelectionMinPressed_Btn->isVisible();
     criteria.protectionMin = protectionSelectionMinPressed_Btn->text().toInt();
 
     criteria.protectionMaxActive = protectionSelectionMaxPressed_Btn->isVisible();
     criteria.protectionMax = protectionSelectionMaxPressed_Btn->text().toInt();
 
+    // --- Telemetry Ranges ---
     criteria.fuelMin = fuelSlider->lowerValue();
     criteria.fuelMax = fuelSlider->upperValue();
-
     criteria.distanceMin = distanceSlider->lowerValue();
     criteria.distanceMax = distanceSlider->upperValue();
 
+    // --- Affiliation ---
     criteria.affiliation = affiliationButton->text();
 
     controller->applyFilter(criteria);
@@ -399,8 +408,8 @@ void MainWindow::filterFunction() {
 }
 
 /**
- * @section UI_INPUT_HANDLERS
- * Slots for handling user interaction with UI elements.
+ * @section UI_INPUT_LOGIC
+ * Slots responsible for translating direct user interaction into UI state changes.
  */
 void MainWindow::callsignChanged(const QString &callsignText) {
     QString callsignFormatted = callsignText;
@@ -673,8 +682,8 @@ void MainWindow::fuelInputMaxChanged(const QString &fuelString) {
 }
 
 /**
- * @section OPERATIONAL_LOGIC
- * Math and simulation logic for real-time asset tracking.
+ * @section SIMULATION_LOGIC
+ * Triggers controller-side simulation updates based on current UI target state.
  */
 void MainWindow::onSimulationTick() {
     const double targetX = targetXLine->text().toDouble();
@@ -683,8 +692,8 @@ void MainWindow::onSimulationTick() {
 }
 
 /**
- * @section SORTING_METHODS
- * Handlers for organizing asset lists by various metrics.
+ * @section SORTING_LOGIC
+ * UI-driven handlers for ordering asset views by operational metrics.
  */
 void MainWindow::updateSortStatus() {
     printList();
@@ -824,7 +833,7 @@ void MainWindow::sortByDistanceDesc() {
 }
 
 /**
- * @section DISPLAY_AND_OUTPUT
+ * @section DISPLAY_LOGIC
  * Functions responsible for rendering data to the user interface.
  */
 void MainWindow::displayButtonClicked() {

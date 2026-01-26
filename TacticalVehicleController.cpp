@@ -1,5 +1,6 @@
 #include "TacticalVehicleController.h"
 #include "TacticalVehicleData.h"
+
 #include <cmath>
 
 /**
@@ -39,7 +40,7 @@ void TacticalVehicleController::applyFilter(const FilterCriteria& criteria) {
         bool distanceMatchMax    = true;
         bool affiliationMatch    = true;
 
-        // --- 1. Operational Capabilities (Strict AND Logic) ---
+        // --- Capability Flags ---
         if (criteria.hasSatCom && !vehicle.hasSatCom) {
             capabilityMatch = false;
         }
@@ -53,7 +54,7 @@ void TacticalVehicleController::applyFilter(const FilterCriteria& criteria) {
             capabilityMatch = false;
         }
 
-        // --- 2. Identity Filters ---
+        // --- Identity Filters ---
         if (criteria.callsignActive && vehicle.callsign != criteria.callsign) {
             callsignMatch = false;
         }
@@ -62,7 +63,7 @@ void TacticalVehicleController::applyFilter(const FilterCriteria& criteria) {
             trackIdMatch = false;
         }
 
-        // --- 3. Strategic Classification ---
+        // --- Strategic Classification ---
         if (criteria.domainActive && vehicle.domain != criteria.domain) {
             domainMatch = false;
         }
@@ -75,7 +76,7 @@ void TacticalVehicleController::applyFilter(const FilterCriteria& criteria) {
             priorityMatch = false;
         }
 
-        // --- 4. Protection Constraints ---
+        // --- Protection Constraints ---
         if (criteria.protectionMinActive && vehicle.protectionLevel < criteria.protectionMin) {
             protectionMatchMin = false;
         }
@@ -84,7 +85,7 @@ void TacticalVehicleController::applyFilter(const FilterCriteria& criteria) {
             protectionMatchMax = false;
         }
 
-        // --- 5. Telemetry Ranges ---
+        // --- Telemetry Ranges ---
         if (vehicle.fuelLevel < criteria.fuelMin) {
             fuelMatchMin = false;
         }
@@ -99,7 +100,7 @@ void TacticalVehicleController::applyFilter(const FilterCriteria& criteria) {
             distanceMatchMax = false;
         }
 
-        // --- 6. Affiliation ---
+        // --- Affiliation ---
         if (criteria.affiliation != "All Types" &&
             vehicle.affiliation != criteria.affiliation) {
             affiliationMatch = false;

@@ -4,7 +4,6 @@
 #include <vector>
 #include <QString>
 
-
 class TacticalVehicleData;
 struct TacticalVehicle;
 
@@ -12,11 +11,12 @@ struct TacticalVehicle;
  * @struct FilterCriteria
  * @brief Aggregates all filter inputs resolved from UI state.
  *
- * Pure data container. No logic.
+ * Pure data container used to parameterize filtering logic.
+ * Contains no behavior or validation.
  */
 struct FilterCriteria
 {
-    // --- Operational Capabilities ---
+    // --- Capability Flags ---
     bool hasSatCom = false;
     bool isAmphibious = false;
     bool isUnmanned = false;
@@ -59,44 +59,32 @@ struct FilterCriteria
 
 /**
  * @class TacticalVehicleController
- * @brief Central logic controller for tactical vehicle processing.
+ * @brief Central domain controller for tactical vehicle processing.
  *
- * Responsibilities:
- *  - Evaluate filtering criteria against the vehicle database
- *  - Maintain derived filtered views for presentation
- *  - Advance simulation state and compute derived telemetry
+ * Evaluates filter criteria against the vehicle dataset, maintains
+ * derived filtered views, and advances simulation state.
  *
- * This class is intentionally UI-agnostic and operates purely
- * on data and primitive inputs resolved by MainWindow.
+ * This class is UI-agnostic and operates purely on model data.
  */
 class TacticalVehicleController
 {
 public:
     explicit TacticalVehicleController(TacticalVehicleData& data);
 
-    /**
-     * @section FILTERING_LOGIC
-     * Computes filteredVehicles based on externally provided criteria.
-     * Does NOT perform any UI updates or own presentation state.
-     */
+    // --- Filtering ---
     void applyFilter(const FilterCriteria& criteria);
     bool isFilterActive() const;
 
-    /**
-     * @section SIMULATION_LOGIC
-     * Advances vehicle positions and updates target-relative telemetry.
-     */
+    // --- Simulation ---
     void updateSimulation(double targetX, double targetY);
 
-    /**
-     * @brief Derived view of vehicles matching current filter criteria.
-     * Owned and maintained by the controller.
-     */
+    // --- Derived Views ---
     std::vector<const TacticalVehicle*> filteredVehicles;
 
 private:
-    /** Reference to the authoritative vehicle data store. */
-    TacticalVehicleData& data;
+    // --- Data Reference ---
+    TacticalVehicleData& data; ///< Authoritative vehicle data store
 };
 
 #endif // TACTICALVEHICLECONTROLLER_H
+

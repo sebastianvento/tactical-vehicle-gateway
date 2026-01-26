@@ -1,4 +1,5 @@
 #include "TacticalVehicleData.h"
+
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
