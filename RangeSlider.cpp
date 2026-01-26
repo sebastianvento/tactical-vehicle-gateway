@@ -3,14 +3,10 @@
 #include <QPainter>
 #include <QMouseEvent>
 
-/**
- * @brief Rendering and interaction logic for the RangeSlider widget.
- *
- * Implements custom painting, mouse interaction, and value-to-pixel mapping.
- */
+// Rendering and interaction logic for the RangeSlider widget.
+// Implements custom painting, mouse interaction, and value-to-pixel mapping
 
 // --- Lifecycle ---
-
 RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent) {
     // Enable mouse tracking to capture movement immediately upon click
     setMouseTracking(true);
@@ -23,7 +19,6 @@ RangeSlider::RangeSlider(QWidget *parent) : QWidget(parent) {
 }
 
 // --- Configuration API ---
-
 void RangeSlider::setRange(int min, int max) {
     m_minimumRange = min;
     m_maximumRange = max;
@@ -47,7 +42,6 @@ void RangeSlider::setValues(int min, int max) {
 }
 
 // --- Rendering ---
-
 void RangeSlider::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event);
     QPainter painter(this);
@@ -90,7 +84,6 @@ void RangeSlider::mousePressEvent(QMouseEvent *event) {
 }
 
 // --- Mouse Interaction ---
-
 void RangeSlider::mouseMoveEvent(QMouseEvent *event) {
     const int currentVal = positionToValue(event->pos().x());
 
@@ -115,7 +108,6 @@ void RangeSlider::mouseReleaseEvent(QMouseEvent *event) {
 }
 
 // --- Coordinate Mapping Utilities ---
-
 int RangeSlider::valueToPosition(int value) {
     const int margin = 20; // Visual padding for handle radius
 
@@ -130,7 +122,7 @@ int RangeSlider::valueToPosition(int value) {
     return margin + static_cast<int>(ratio * pixelWidth);
 }
 
-int RangeSlider::positionToValue(int x) {
+int RangeSlider::positionToValue(int position) {
     const int margin = 20;
 
     if (width() <= 2 * margin) {
@@ -138,7 +130,7 @@ int RangeSlider::positionToValue(int x) {
     }
 
     const double pixelWidth = width() - (2 * margin);
-    const double ratio = static_cast<double>(x - margin) / pixelWidth;
+    const double ratio = static_cast<double>(position - margin) / pixelWidth;
     const int value = m_minimumRange + static_cast<int>(ratio * (m_maximumRange - m_minimumRange));
 
     return qBound(m_minimumRange, value, m_maximumRange);

@@ -35,7 +35,7 @@
  *  - Connecting UI state to filtering, sorting, and simulation logic
  */
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
-    // --- 1. DATA & CORE INITIALIZATION ---
+    // --- DATA & CORE INITIALIZATION ---
     tacticalVehicleDb = std::make_unique<TacticalVehicleData>();
     controller = std::make_unique<TacticalVehicleController>(*tacticalVehicleDb);
     tacticalVehicleDb->loadVehiclesFromJson(":/data/vehicles.json");
@@ -44,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     setMinimumSize(1000, 720);
     this->resize(1000, 750);
 
-    // --- 2. LAYOUT ARCHITECTURE ---
+    // --- LAYOUT ARCHITECTURE ---
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
     QVBoxLayout *leftPanel = new QVBoxLayout();
     QVBoxLayout *rightPanel = new QVBoxLayout();
@@ -52,8 +52,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     rightPanel->setContentsMargins(0, 15, 0, 0);
     rightPanel->setSpacing(0);
 
-    // --- 3. LEFT PANEL: UI GROUPS ---
-
+    // --- LEFT PANEL: UI GROUPS ---
     // Section: Operational Capabilities
     QGroupBox *capGroup = new QGroupBox("Operational Capabilities");
     QGridLayout *capGrid = new QGridLayout();
@@ -228,8 +227,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     leftPanel->addSpacing(5);
     leftPanel->addWidget(exitButton);
 
-    // --- 4. RIGHT PANEL: RESULTS & SORTING ---
-
+    // --- RIGHT PANEL: RESULTS & SORTING ---
     // Header Logo Bar
     QWidget *headerBar = new QWidget();
     headerBar->setObjectName("headerBar");
@@ -267,13 +265,12 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     resultsList = new QListWidget();
     rightPanel->addWidget(resultsList);
 
-    // --- 5. FINAL LAYOUT ASSEMBLY ---
+    // --- FINAL LAYOUT ASSEMBLY ---
     mainLayout->addLayout(leftPanel, 1);
     mainLayout->addLayout(rightPanel, 2);
     setLayout(mainLayout);
 
-    // --- 6. SIGNAL & SLOT CONNECTIONS ---
-
+    // --- SIGNAL & SLOT CONNECTIONS ---
     // Capability Toggles
     connect(cbHasSatCom, &QCheckBox::toggled, this, &MainWindow::filterFunction);
     connect(cbIsAmphibious, &QCheckBox::toggled, this, &MainWindow::filterFunction);
@@ -323,12 +320,15 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     connect(actionClassDesc, &QAction::triggered, this, &MainWindow::sortByClassificationDesc);
     connect(exitButton, &QPushButton::clicked, qApp, &QApplication::quit);
 
-    // --- 7. AUTO-COMPLETE & DYNAMIC UPDATES ---
-
+    // --- AUTO-COMPLETE & DYNAMIC UPDATES ---
     // Populate Search Data
     for (const auto& v : tacticalVehicleDb->vehicles()) {
-        if (!v.callsign.isEmpty() && !callsignList.contains(v.callsign)) callsignList << v.callsign;
-        if (!v.trackId.isEmpty() && !trackIdList.contains(v.trackId)) trackIdList << v.trackId;
+        if (!v.callsign.isEmpty() && !callsignList.contains(v.callsign)) {
+            callsignList << v.callsign;
+        }
+        if (!v.trackId.isEmpty() && !trackIdList.contains(v.trackId)) {
+            trackIdList << v.trackId;
+        }
     }
 
     callsignCompleter = new QCompleter(callsignList, this);
@@ -346,10 +346,8 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     simTimer->start(1000);
 }
 
-/**
- * @section FILTERING_LOGIC
- * Resolves UI state into filter criteria and delegates evaluation to the controller.
- */
+// --- FILTERING LOGIC ---
+// Resolves UI state into filter criteria and delegates evaluation to the controller.
 void MainWindow::filterFunction() {
     FilterCriteria criteria;
 
@@ -362,7 +360,6 @@ void MainWindow::filterFunction() {
     // --- Identity Filters ---
     criteria.callsignActive = callsignSelectionPressed_Btn->isVisible();
     criteria.callsign = callsignSelectionPressed_Btn->text();
-
     criteria.trackIdActive = trackIdSelectionPressed_Btn->isVisible();
     criteria.trackId = trackIdSelectionPressed_Btn->text();
 
@@ -407,10 +404,8 @@ void MainWindow::filterFunction() {
     }
 }
 
-/**
- * @section UI_INPUT_LOGIC
- * Slots responsible for translating direct user interaction into UI state changes.
- */
+// --- UI INPUT LOGIC ---
+// Slots responsible for translating direct user interaction into UI state changes.
 void MainWindow::callsignChanged(const QString &callsignText) {
     QString callsignFormatted = callsignText;
     if (!callsignText.isEmpty()) {
@@ -681,20 +676,16 @@ void MainWindow::fuelInputMaxChanged(const QString &fuelString) {
     filterFunction();
 }
 
-/**
- * @section SIMULATION_LOGIC
- * Triggers controller-side simulation updates based on current UI target state.
- */
+// --- SIMULATION LOGIC ---
+// Triggers controller-side simulation updates based on current UI target state.
 void MainWindow::onSimulationTick() {
     const double targetX = targetXLine->text().toDouble();
     const double targetY = targetYLine->text().toDouble();
     controller->updateSimulation(targetX, targetY);
 }
 
-/**
- * @section SORTING_LOGIC
- * UI-driven handlers for ordering asset views by operational metrics.
- */
+// --- SORTING LOGIC ---
+// UI-driven handlers for ordering asset views by operational metrics.
 void MainWindow::updateSortStatus() {
     printList();
     QString buttonText = sortButton->text();
@@ -706,6 +697,7 @@ void MainWindow::updateSortStatus() {
 
 void MainWindow::sortByFuelAsc() {
     if (resultsList->count() == 0) return;
+
     auto& fv = controller->filteredVehicles;
     auto& av = tacticalVehicleDb->vehiclesMutable();
 
@@ -722,6 +714,7 @@ void MainWindow::sortByFuelAsc() {
 
 void MainWindow::sortByFuelDesc() {
     if (resultsList->count() == 0) return;
+
     auto& fv = controller->filteredVehicles;
     auto& av = tacticalVehicleDb->vehiclesMutable();
 
@@ -738,6 +731,7 @@ void MainWindow::sortByFuelDesc() {
 
 void MainWindow::sortByPriorityAsc() {
     if (resultsList->count() == 0) return;
+
     auto& fv = controller->filteredVehicles;
     auto& av = tacticalVehicleDb->vehiclesMutable();
 
@@ -754,6 +748,7 @@ void MainWindow::sortByPriorityAsc() {
 
 void MainWindow::sortByPriorityDesc() {
     if (resultsList->count() == 0) return;
+
     auto& fv = controller->filteredVehicles;
     auto& av = tacticalVehicleDb->vehiclesMutable();
 
@@ -770,6 +765,7 @@ void MainWindow::sortByPriorityDesc() {
 
 void MainWindow::sortByClassificationAsc() {
     if (resultsList->count() == 0) return;
+
     auto& fv = controller->filteredVehicles;
     auto& av = tacticalVehicleDb->vehiclesMutable();
 
@@ -786,6 +782,7 @@ void MainWindow::sortByClassificationAsc() {
 
 void MainWindow::sortByClassificationDesc() {
     if (resultsList->count() == 0) return;
+
     auto& fv = controller->filteredVehicles;
     auto& av = tacticalVehicleDb->vehiclesMutable();
 
@@ -802,6 +799,7 @@ void MainWindow::sortByClassificationDesc() {
 
 void MainWindow::sortByDistanceAsc() {
     if (resultsList->count() == 0) return;
+
     auto& fv = controller->filteredVehicles;
     auto& av = tacticalVehicleDb->vehiclesMutable();
 
@@ -818,6 +816,7 @@ void MainWindow::sortByDistanceAsc() {
 
 void MainWindow::sortByDistanceDesc() {
     if (resultsList->count() == 0) return;
+
     auto& fv = controller->filteredVehicles;
     auto& av = tacticalVehicleDb->vehiclesMutable();
 
@@ -832,10 +831,8 @@ void MainWindow::sortByDistanceDesc() {
     updateSortStatus();
 }
 
-/**
- * @section DISPLAY_LOGIC
- * Functions responsible for rendering data to the user interface.
- */
+// --- DISPLAY LOGIC ---
+// Functions responsible for rendering data to the user interface.
 void MainWindow::displayButtonClicked() {
     manualUpdateRequested = true;
     filterFunction();
@@ -847,6 +844,7 @@ void MainWindow::displayButtonClicked() {
 
 void MainWindow::printList() {
     if (!manualUpdateRequested) return;
+
     resultsList->clear();
 
     QFont monoFont("Lucida Console", 12);

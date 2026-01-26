@@ -4,22 +4,20 @@
 #include <cmath>
 
 /**
- * @brief TacticalVehicleController Constructor
- * Binds the controller to the shared TacticalVehicleData store.
- * The controller operates on data but owns no UI state.
+ * @brief Binds the controller to the shared TacticalVehicleData store.
+ *
+ * The controller operates purely on model data and owns no UI state.
  */
 TacticalVehicleController::TacticalVehicleController(TacticalVehicleData& data) : data(data) {
 }
 
-/**
- * @section FILTERING_LOGIC
- * Core engine for evaluating tactical vehicle data against
- * UI-provided filter criteria.
- *
- * This function is intentionally UI-agnostic: all visual state
- * (visibility, selections, ranges) is resolved by MainWindow
- * before being passed here as primitive values.
- */
+// --- FILTERING LOGIC ---
+// Core engine for evaluating tactical vehicle data against
+// UI-provided filter criteria.
+//
+// This function is intentionally UI-agnostic: all visual state
+// (visibility, selections, ranges) is resolved by MainWindow
+// before being passed here as primitive values.
 void TacticalVehicleController::applyFilter(const FilterCriteria& criteria) {
     filteredVehicles.clear();
 
@@ -144,14 +142,12 @@ bool TacticalVehicleController::isFilterActive() const {
     return filteredVehicles.size() != data.vehicles().size();
 }
 
-/**
- * @section SIMULATION_LOGIC
- * Advances vehicle positions and recalculates distances
- * relative to the current mission target.
- *
- * This function operates exclusively on model data and is
- * triggered externally by a timed heartbeat (QTimer).
- */
+// --- SIMULATION LOGIC ---
+// Advances vehicle positions and recalculates distances
+// relative to the current mission target.
+//
+// This function operates exclusively on model data and is
+// triggered externally by a timed heartbeat (QTimer).
 void TacticalVehicleController::updateSimulation(double targetX, double targetY)
 {
     constexpr double PI_CONST = 3.14159265358979323846;

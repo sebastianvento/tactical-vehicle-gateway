@@ -15,6 +15,7 @@ class QListWidget;
 class QMenu;
 class QPushButton;
 class QTimer;
+
 class RangeSlider;
 class TacticalVehicleData;
 
