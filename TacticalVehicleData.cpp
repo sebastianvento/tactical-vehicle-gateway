@@ -6,15 +6,9 @@
 #include <QFile>
 #include <QDebug>
 
-/**
- * @class TacticalVehicleData
- * @brief Implementation of data management logic for the Tactical Gateway.
- *
- * This translation unit owns the persistent tactical dataset and provides:
- *  - JSON-based data ingestion
- *  - Controlled access to the master vehicle container
- *  - Stateless comparison predicates for sorting derived views
- */
+// --- TacticalVehicleData Implementation ---
+// Owns the persistent tactical dataset and provides JSON ingestion,
+// controlled container access, and stateless sorting predicates.
 
 // --- Lifecycle ---
 TacticalVehicleData::TacticalVehicleData() {
