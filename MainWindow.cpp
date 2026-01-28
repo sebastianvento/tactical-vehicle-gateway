@@ -1062,7 +1062,7 @@ void MainWindow::listItemDoubleclicked(QListWidgetItem *item) {
             entityList->insertItem(7, distanceItem);
             speedItem->setText(dSpe);
             entityList->insertItem(8, speedItem);
-            speedItem->setText(dHea);
+            headingItem->setText(dHea);
             entityList->insertItem(9, headingItem);
             new QListWidgetItem(dFue, entityList);
             new QListWidgetItem(dAmm, entityList);
