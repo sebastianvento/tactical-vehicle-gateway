@@ -39,6 +39,7 @@ private slots:
     // --- Core Logic ---
     void displayButtonClicked();                       ///< Explicit trigger to refresh displayed results
     void filterFunction();                             ///< Resolves UI state into filter criteria
+    void filtersCleared();
     void printList();                                  ///< Populates resultsList from current data view
     void listItemDoubleclicked(QListWidgetItem *item); ///< Shows dialog with entity info when QListWidget item clicked.
 
@@ -131,6 +132,7 @@ private:
     QMenu *protectionMenuMax;
     QMenu *protectionMenuMin;
 
+    QPushButton *affiliationButton;
     QMenu *affiliationMenu;
     QMenu *sortMenu;
 
@@ -149,7 +151,8 @@ private:
     // --- Command & Feedback Controls ---
     QPushButton *displayButton;
     QPushButton *sortButton;
-    QPushButton *affiliationButton;
+    QPushButton *clearButton;
+    QCheckBox *liveUpdatesBox;
 
     QIcon choiceDeletion;
 
@@ -164,7 +167,6 @@ private:
 
     // --- Information Display ---
     QLabel *labelLogo;
-    QLabel *labelTrackId;
     QListWidget *resultsList;
 
     // --- Dialogs ---

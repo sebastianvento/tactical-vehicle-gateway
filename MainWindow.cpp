@@ -80,7 +80,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     callsignSelectionPressed_Btn->setVisible(false);
     idGrid->addWidget(new QLabel("Affiliation:"), 0, 3);
 
-    idGrid->addWidget(labelTrackId = new QLabel("Track ID:"), 1, 0);
+    idGrid->addWidget(new QLabel("Track ID:"), 1, 0);
     idGrid->addWidget(trackIdLine = new QLineEdit(), 1, 1);
     idGrid->addWidget(trackIdSelectionPressed_Btn = new QPushButton(), 1, 2);
     trackIdSelectionPressed_Btn->setIcon(choiceDeletion);
@@ -247,7 +247,14 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
 
     // Sort Menu Actions
     QHBoxLayout *sortBarLayout = new QHBoxLayout();
+    clearButton = new QPushButton("Clear all filters");
+    QLabel *liveUpdateLabel = new QLabel("Live Updates");
+    liveUpdateLabel->setContentsMargins(10, 0, 10, 0);
+    liveUpdatesBox = new QCheckBox;
     sortBarLayout->setContentsMargins(0, 10, 0, 0);
+    sortBarLayout->addWidget(clearButton);
+    sortBarLayout->addWidget(liveUpdateLabel);
+    sortBarLayout->addWidget(liveUpdatesBox);
     sortBarLayout->addStretch();
     sortButton = new QPushButton("Sort");
     sortMenu = new QMenu(this);
@@ -264,6 +271,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     sortBarLayout->addWidget(sortButton);
     rightPanel->addLayout(sortBarLayout);
 
+    // Result List
     resultsList = new QListWidget();
     rightPanel->addWidget(resultsList);
 
@@ -309,6 +317,9 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     connect(distanceInputMax, &QLineEdit::textChanged, this, &MainWindow::distanceInputMaxChanged);
     connect(targetXLine, &QLineEdit::textChanged, this, &MainWindow::filterFunction);
     connect(targetYLine, &QLineEdit::textChanged, this, &MainWindow::filterFunction);
+
+    // Filter Clearing
+    connect(clearButton, &QPushButton::clicked, this, &MainWindow::filtersCleared);
 
     // Sorting & Application Actions
     connect(displayButton, &QPushButton::clicked, this, &MainWindow::displayButtonClicked);
@@ -407,6 +418,48 @@ void MainWindow::filterFunction() {
             QString::number(controller->filteredVehicles.size()) + ")"
             );
     }
+}
+
+void MainWindow::filtersCleared() {
+    // --- Capability Flags ---
+    cbHasSatCom->setCheckState(Qt::Unchecked);
+    cbIsAmphibious->setCheckState(Qt::Unchecked);
+    cbIsUnmanned->setCheckState(Qt::Unchecked);
+    cbHasActiveDefense->setCheckState(Qt::Unchecked);
+
+    // --- Identity Filters ---
+    callsignSelectionPressed_Btn->setVisible(false);
+    callsignLine->setText("");
+    trackIdSelectionPressed_Btn->setVisible(false);
+    trackIdLine->setText("");
+
+    // --- Strategic Classification ---
+    domainButtonSelectionPressed_Btn->setVisible(false);
+    domainButtonSelectionPressed_Btn->setText("");
+
+    propulsionSelectionPressed_Btn->setVisible(false);
+    propulsionSelectionPressed_Btn->setText("");
+
+    prioritySelectionPressed_Btn->setVisible(false);
+    prioritySelectionPressed_Btn->setText("");
+
+    // --- Protection Constraints ---
+    protectionSelectionMinPressed_Btn->setVisible(false);
+    protectionSelectionMinPressed_Btn->setText("");
+
+    protectionSelectionMaxPressed_Btn->setVisible(false);
+    protectionSelectionMaxPressed_Btn->setText("");
+
+    // --- Telemetry Ranges ---
+    fuelInputMin->setText("0%");
+    fuelInputMax->setText("100%");
+    fuelSlider->setValues(0, 100);
+    distanceSlider->setValues(0, 10000);
+
+    // --- Affiliation ---
+    affiliationButton->setText("All Types");
+
+    filterFunction();
 }
 
 // --- UI Input Logic ---
@@ -687,7 +740,7 @@ void MainWindow::onSimulationTick() {
     const double targetX = targetXLine->text().toDouble();
     const double targetY = targetYLine->text().toDouble();
     controller->updateSimulation(targetX, targetY);
-    if (resultsList->count() > 0) {
+    if (resultsList->count() > 0 && liveUpdatesBox->isChecked()) {
         manualUpdateRequested = true;
         printList();
         manualUpdateRequested = false;
@@ -922,10 +975,18 @@ void MainWindow::listItemDoubleclicked(QListWidgetItem *item) {
 
     QString extractedCallsign = item->text().section(' ', 0, 0);
 
+    QHBoxLayout *entityTopPanel = new QHBoxLayout();
+    QLabel *entityLiveUpdatesLabel = new QLabel("Live Updates");
+    QCheckBox *entityLiveUpdatesBox = new QCheckBox();
+    entityTopPanel->addWidget(entityLiveUpdatesLabel);
+    entityTopPanel->addWidget(entityLiveUpdatesBox);
+    entityTopPanel->addStretch();
+
     QListWidget *entityList = new QListWidget();
     entityList->setSelectionMode(QAbstractItemView::NoSelection);
 
     QVBoxLayout *entityLayout = new QVBoxLayout();
+    entityLayout->addLayout(entityTopPanel);
     entityLayout->addWidget(entityList);
     entityDialog->setLayout(entityLayout);
 
@@ -1017,7 +1078,7 @@ void MainWindow::listItemDoubleclicked(QListWidgetItem *item) {
     }
     connect(simTimer, &QTimer::timeout, entityDialog, [=]() {
         for (const auto &vehicleUpdate : tacticalVehicleDb->vehicles()) {
-            if (vehicleUpdate.callsign == extractedCallsign) {
+            if (vehicleUpdate.callsign == extractedCallsign && entityLiveUpdatesBox->isChecked()) {
                 distanceItem->setText("Distance to target: " +QString::number(vehicleUpdate.distanceToTarget, 'f', 0) + "m");
             }
         }
