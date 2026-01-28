@@ -15,6 +15,8 @@ class QListWidget;
 class QMenu;
 class QPushButton;
 class QTimer;
+class QDialog;
+class QListWidgetItem;
 
 class RangeSlider;
 class TacticalVehicleData;
@@ -38,6 +40,7 @@ private slots:
     void displayButtonClicked();    ///< Explicit trigger to refresh displayed results
     void filterFunction();          ///< Resolves UI state into filter criteria
     void printList();               ///< Populates resultsList from current data view
+    void listItemDoubleclicked(QListWidgetItem *item);            ///< Shows dialog with entity info when QListWidget item clicked.
 
     // --- Identity & Search Management ---
     void callsignChanged(const QString& text);
@@ -163,6 +166,9 @@ private:
     QLabel *labelLogo;
     QLabel *labelTrackId;
     QListWidget *resultsList;
+
+    // --- Dialogs ---
+    QDialog *entityDialog;
 
     // --- Timing & Helpers ---
     QTimer *simTimer;

@@ -22,6 +22,8 @@
 #include <QGroupBox>
 #include <QTimer>
 #include <QDoubleValidator>
+#include <QDialog>
+#include <QListWidgetItem>
 
 #include <vector>
 #include <algorithm>
@@ -319,6 +321,9 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     connect(actionClassAsc, &QAction::triggered, this, &MainWindow::sortByClassificationAsc);
     connect(actionClassDesc, &QAction::triggered, this, &MainWindow::sortByClassificationDesc);
     connect(exitButton, &QPushButton::clicked, qApp, &QApplication::quit);
+
+    // Listwidget dialog
+    connect(resultsList, &QListWidget::itemDoubleClicked, this, &MainWindow::listItemDoubleclicked);
 
     // --- AUTO-COMPLETE & DYNAMIC UPDATES ---
     // Populate Search Data
@@ -898,6 +903,106 @@ void MainWindow::printList() {
                         vehicle.affiliation);
         }
     }
+}
+
+// --- Dialog Logic  ---
+// Slot responsible for entity dialog.
+
+void MainWindow::listItemDoubleclicked(QListWidgetItem *item) {
+    entityDialog = new QDialog(this);
+    entityDialog->show();
+    entityDialog->raise();
+    entityDialog->activateWindow();
+    entityDialog->setSizeGripEnabled(true);
+    entityDialog->setBaseSize(375, 375);
+    QString extractedCallsign = item->text().section(' ', 0, 0);
+    QListWidget *entityList = new QListWidget();
+    entityList->setSelectionMode(QAbstractItemView::NoSelection);
+    QVBoxLayout *entityLayout = new QVBoxLayout();
+    entityLayout->addWidget(entityList);
+    entityDialog->setLayout(entityLayout);
+
+    QFont entityFont("Lucida Console", 12);
+    entityFont.setStyleHint(QFont::Monospace);
+    entityList->setFont(entityFont);
+
+    for (const auto& vehicle : tacticalVehicleDb->vehicles()) {
+        if (vehicle.callsign == extractedCallsign) {
+            QString dCall =  ("Callsign:           " + extractedCallsign);
+            QString dTrack = ("Track ID:           " + vehicle.trackId);
+            QString dPrio =  ("Strategic Priority: " + vehicle.priority);
+            QString dDom =   ("Domain:             " + vehicle.domain);
+            QString dClas =  ("Classification:     " + vehicle.classification);
+            QString dTyp =   ("Type:               " + vehicle.type);
+            QString dDist =  ("Distance to target: " + QString::number(vehicle.distanceToTarget, 'f', 0) + "m");
+            QString dSpe =   ("Speed:              " + QString::number(vehicle.speed, 'f', 0) + "km/h");
+            QString dHea =   ("Heading:            " + QString::number(vehicle.heading, 'f', 0) + "°");
+            QString dFue =   ("Est. fuel level:    " + QString::number(vehicle.fuelLevel, 'f', 1) + "%");
+            QString dAmm =   ("Est. amm. level:    " + QString::number(vehicle.ammunitionLevel, 'f', 1) + "%");
+            QString dUnm;
+            if (vehicle.isUnmanned) {
+                dUnm = "Yes";
+            }
+            else {
+                dUnm = "No";
+            }
+            dUnm =           ("Unmanned:           " + dUnm);
+            QString dSat;
+            if (vehicle.hasSatCom) {
+                dSat = "Yes";
+            }
+            else {
+                dSat = "No";
+            }
+            dSat =           ("Has SatCom:         " + dSat);
+            QString dAct;
+            if (vehicle.hasActiveDefense) {
+                dAct = "Yes";
+            }
+            else {
+                dAct = "No";
+            }
+            dAct =           ("Has Active Defence: " + dAct);
+            QString dAmp;
+            if (vehicle.isAmphibious) {
+                dAmp = "Yes";
+            }
+            else {
+                dAmp = "No";
+            }
+            dAmp =           ("Is Amphibious:      " + dAmp);
+            QString dProt =  ("Protection Level:   " + QString::number(vehicle.protectionLevel, 'f', 0));
+            QString dMSpe =  ("Maximum Speed       " + QString::number(vehicle.maxSpeed, 'f', 0) + "km/h");
+            QString dProp =  ("Propulsion          " + vehicle.propulsion);
+            new QListWidgetItem(dCall, entityList);
+            new QListWidgetItem(dTrack, entityList);
+            new QListWidgetItem(dPrio, entityList);
+            new QListWidgetItem(dClas, entityList);
+            new QListWidgetItem(dDom, entityList);
+            new QListWidgetItem(dTyp, entityList);
+            new QListWidgetItem(dDist, entityList);
+            new QListWidgetItem(dSpe, entityList);
+            new QListWidgetItem(dHea, entityList);
+            new QListWidgetItem(dFue, entityList);
+            new QListWidgetItem(dAmm, entityList);
+            new QListWidgetItem(dUnm, entityList);
+            new QListWidgetItem(dSat, entityList);
+            new QListWidgetItem(dAct, entityList);
+            new QListWidgetItem(dAmp, entityList);
+            new QListWidgetItem(dProt, entityList);
+            new QListWidgetItem(dMSpe, entityList);
+            new QListWidgetItem(dProp, entityList);
+
+            if (vehicle.affiliation.contains("Friendly", Qt::CaseInsensitive)) {
+                entityList->setStyleSheet("QListWidget { color: rgb(0, 162, 232); }");
+            } else if (vehicle.affiliation.contains("Hostile", Qt::CaseInsensitive)) {
+                entityList->setStyleSheet("QListWidget { color: red; }");
+            } else {
+                entityList->setStyleSheet("QListWidget { color: white; }");
+            }
+        }
+    }
+
 }
 
 MainWindow::~MainWindow() {
