@@ -436,24 +436,31 @@ void MainWindow::filtersCleared() {
     // --- Strategic Classification ---
     domainButtonSelectionPressed_Btn->setVisible(false);
     domainButtonSelectionPressed_Btn->setText("");
+    domainButton->setText("Select Domain");
 
     propulsionSelectionPressed_Btn->setVisible(false);
     propulsionSelectionPressed_Btn->setText("");
+    propulsionButton->setText("Select Propulsion");
 
     prioritySelectionPressed_Btn->setVisible(false);
     prioritySelectionPressed_Btn->setText("");
+    priorityButton->setText("Set Priority");
 
     // --- Protection Constraints ---
     protectionSelectionMinPressed_Btn->setVisible(false);
     protectionSelectionMinPressed_Btn->setText("");
+    protectionButtonMin->setText("Min Level");
 
     protectionSelectionMaxPressed_Btn->setVisible(false);
     protectionSelectionMaxPressed_Btn->setText("");
+    protectionButtonMax->setText("Max Level");
 
     // --- Telemetry Ranges ---
     fuelInputMin->setText("0%");
     fuelInputMax->setText("100%");
     fuelSlider->setValues(0, 100);
+    distanceInputMin->setText("0 m");
+    distanceInputMax->setText("MAX (No Limit)");
     distanceSlider->setValues(0, 10000);
 
     // --- Affiliation ---
@@ -655,13 +662,10 @@ void MainWindow::distanceSliderChanged(int x, int y) {
     } else {
         distanceInputMin->setText(QString::number(x) + " m");
     }
-    if (y == 10000) {
-        distanceInputMax->setText("10000 m");
-    } else {
-        distanceInputMax->setText(QString::number(y) + " m");
-    }
     if (y >= 10000) {
         distanceInputMax->setText("MAX (No Limit)");
+    } else {
+        distanceInputMax->setText(QString::number(y) + " m");
     }
     distanceInputMin->blockSignals(false);
     distanceInputMax->blockSignals(false);
