@@ -1002,7 +1002,6 @@ void MainWindow::listItemDoubleclicked(QListWidgetItem *item) {
     QListWidgetItem *distanceItem = new QListWidgetItem;
     QListWidgetItem *speedItem = new QListWidgetItem;
     QListWidgetItem *headingItem = new QListWidgetItem;
-
     for (const auto& vehicle : tacticalVehicleDb->vehicles()) {
         if (vehicle.callsign == extractedCallsign) {
             QString dCall =  ("Callsign:           " + extractedCallsign);
@@ -1052,7 +1051,6 @@ void MainWindow::listItemDoubleclicked(QListWidgetItem *item) {
             QString dProt =  ("Protection Level:   " + QString::number(vehicle.protectionLevel, 'f', 0));
             QString dMSpe =  ("Maximum Speed:      " + QString::number(vehicle.maxSpeed, 'f', 0) + " km/h");
             QString dProp =  ("Propulsion:         " + vehicle.propulsion);
-
             new QListWidgetItem(dCall, entityList);
             new QListWidgetItem(dTrack, entityList);
             new QListWidgetItem(dPrio, entityList);
