@@ -174,8 +174,6 @@ private:
 
     // --- Timing & Helpers ---
     QTimer *simTimer;
-
-    void updateSortStatus();
 };
 
 #endif // MAINWINDOW_H

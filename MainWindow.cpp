@@ -22,6 +22,7 @@
 #include <QGroupBox>
 #include <QTimer>
 #include <QDoubleValidator>
+#include <QIntValidator>
 #include <QDialog>
 #include <QListWidgetItem>
 
@@ -175,21 +176,27 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     // Section: Telemetry & Target Inputs
     QGroupBox *teleGroup = new QGroupBox("Telemetry & Mission Target");
     QGridLayout *teleGrid = new QGridLayout();
+    QIntValidator *fuelValidator = new QIntValidator(0,100, this);
     teleGrid->addWidget(new QLabel("Fuel Level (%):"), 0, 0);
     fuelSlider = new RangeSlider();
     fuelSlider->setRange(0, 100);
     fuelSlider->setValues(0, 100);
     teleGrid->addWidget(fuelSlider, 0, 1, 1, 2);
-    teleGrid->addWidget(fuelInputMin = new QLineEdit("0%"), 1, 1);
-    teleGrid->addWidget(fuelInputMax = new QLineEdit("100%"), 1, 2);
+    teleGrid->addWidget(fuelInputMin = new QLineEdit("0"), 1, 1);
+    fuelInputMin->setValidator(fuelValidator);
+    teleGrid->addWidget(fuelInputMax = new QLineEdit("100"), 1, 2);
+    fuelInputMax->setValidator(fuelValidator);
 
+    QIntValidator *distanceValidator = new QIntValidator(0,10000, this);
     teleGrid->addWidget(new QLabel("Distance to Target (m):"), 2, 0);
     distanceSlider = new RangeSlider();
     distanceSlider->setRange(0, 10000);
     distanceSlider->setValues(0, 10000);
     teleGrid->addWidget(distanceSlider, 2, 1, 1, 2);
-    teleGrid->addWidget(distanceInputMin = new QLineEdit("0 m"), 3, 1);
+    teleGrid->addWidget(distanceInputMin = new QLineEdit("0"), 3, 1);
+    distanceInputMin->setValidator(distanceValidator);
     teleGrid->addWidget(distanceInputMax = new QLineEdit("MAX (No Limit)"), 3, 2);
+    distanceInputMax->setValidator(distanceValidator);
 
     teleGrid->addWidget(new QLabel("Target (X, Y):"), 4, 0);
     QHBoxLayout *coordLayout = new QHBoxLayout();
@@ -653,19 +660,18 @@ void MainWindow::protectionSelectionMaxPressed() {
     protectionButtonMax->setText("Max Level");
     filterFunction();
 }
-
 void MainWindow::distanceSliderChanged(int x, int y) {
     distanceInputMin->blockSignals(true);
     distanceInputMax->blockSignals(true);
     if (x == 0) {
-        distanceInputMin->setText("0 m");
+        distanceInputMin->setText("0");
     } else {
-        distanceInputMin->setText(QString::number(x) + " m");
+        distanceInputMin->setText(QString::number(x));
     }
     if (y >= 10000) {
         distanceInputMax->setText("MAX (No Limit)");
     } else {
-        distanceInputMax->setText(QString::number(y) + " m");
+        distanceInputMax->setText(QString::number(y));
     }
     distanceInputMin->blockSignals(false);
     distanceInputMax->blockSignals(false);
@@ -673,24 +679,42 @@ void MainWindow::distanceSliderChanged(int x, int y) {
 }
 
 void MainWindow::distanceInputMinChanged(const QString &distanceString) {
+    if (distanceInputMin->signalsBlocked()) return;
+
     distanceSlider->blockSignals(true);
     if (distanceString.isEmpty()) {
         distanceSlider->setValues(0, distanceSlider->upperValue());
-        distanceInputMin->setPlaceholderText("0 m");
+        distanceInputMin->setPlaceholderText("0");
     } else {
-        distanceSlider->setValues(distanceString.toInt(), distanceSlider->upperValue());
+        bool ok;
+        int val = distanceString.toInt(&ok);
+        if (ok) distanceSlider->setValues(val, distanceSlider->upperValue());
     }
     distanceSlider->blockSignals(false);
     filterFunction();
 }
 
 void MainWindow::distanceInputMaxChanged(const QString &distanceString) {
+    if (distanceInputMax->signalsBlocked()) return;
+
     distanceSlider->blockSignals(true);
     if (distanceString.isEmpty()) {
         distanceSlider->setValues(distanceSlider->lowerValue(), 10000);
-        distanceInputMax->setPlaceholderText("10000 m");
-    } else {
-        distanceSlider->setValues(distanceSlider->lowerValue(), distanceString.toInt());
+        distanceInputMax->setPlaceholderText("MAX (No Limit)");
+    }
+    else if (distanceString == "MAX (No Limit)" || distanceString.toInt() >= 10000) {
+        distanceSlider->setValues(distanceSlider->lowerValue(), 10000);
+
+        distanceInputMax->blockSignals(true);
+        distanceInputMax->setText("MAX (No Limit)");
+        distanceInputMax->blockSignals(false);
+    }
+    else {
+        bool ok;
+        int val = distanceString.toInt(&ok);
+        if (ok) {
+            distanceSlider->setValues(distanceSlider->lowerValue(), val);
+        }
     }
     distanceSlider->blockSignals(false);
     filterFunction();
@@ -700,14 +724,14 @@ void MainWindow::fuelSliderChanged(int x, int y) {
     fuelInputMin->blockSignals(true);
     fuelInputMax->blockSignals(true);
     if (x == 0) {
-        fuelInputMin->setText("0%");
+        fuelInputMin->setText("0");
     } else {
-        fuelInputMin->setText(QString::number(x) + "%");
+        fuelInputMin->setText(QString::number(x));
     }
     if (y == 100) {
-        fuelInputMax->setText("100%");
+        fuelInputMax->setText("100");
     } else {
-        fuelInputMax->setText(QString::number(y) + "%");
+        fuelInputMax->setText(QString::number(y));
     }
     fuelInputMin->blockSignals(false);
     fuelInputMax->blockSignals(false);
@@ -715,24 +739,31 @@ void MainWindow::fuelSliderChanged(int x, int y) {
 }
 
 void MainWindow::fuelInputMinChanged(const QString &fuelString) {
+    if (fuelInputMin->signalsBlocked()) return;
+
     fuelSlider->blockSignals(true);
     if (fuelString.isEmpty()) {
         fuelSlider->setValues(0, fuelSlider->upperValue());
-        fuelInputMin->setPlaceholderText("0%");
+        fuelInputMin->setPlaceholderText("0");
     } else {
-        fuelSlider->setValues(fuelString.toInt(), fuelSlider->upperValue());
+        bool ok;
+        int val = fuelString.toInt(&ok);
+        if (ok) fuelSlider->setValues(val, fuelSlider->upperValue());
     }
     fuelSlider->blockSignals(false);
     filterFunction();
 }
 
 void MainWindow::fuelInputMaxChanged(const QString &fuelString) {
+    if (fuelInputMax->signalsBlocked()) return;
     fuelSlider->blockSignals(true);
     if (fuelString.isEmpty()) {
         fuelSlider->setValues(fuelSlider->lowerValue(), 100);
-        fuelInputMax->setPlaceholderText("100%");
+        fuelInputMax->setPlaceholderText("100");
     } else {
-        fuelSlider->setValues(fuelSlider->lowerValue(), fuelString.toInt());
+        bool ok;
+        int val = fuelString.toInt(&ok);
+        if (ok) fuelSlider->setValues(fuelSlider->lowerValue(), val);
     }
     fuelSlider->blockSignals(false);
     filterFunction();
@@ -760,12 +791,6 @@ void MainWindow::onSimulationTick() {
 
 // --- Sorting Logic ---
 // UI-driven handlers for ordering asset views by operational metrics.
-void MainWindow::updateSortStatus() {
-    printList();
-    QString buttonText = sortButton->text();
-    sortButton->setToolTip(buttonText);
-}
-
 void MainWindow::sortByFuelAsc() {
     if (resultsList->count() == 0) return;
 
@@ -780,7 +805,7 @@ void MainWindow::sortByFuelAsc() {
     }
     sortButton->setText("Fuel: Critical First");
     manualUpdateRequested = true;
-    updateSortStatus();
+    printList();
 }
 
 void MainWindow::sortByFuelDesc() {
@@ -797,7 +822,7 @@ void MainWindow::sortByFuelDesc() {
     }
     sortButton->setText("Fuel: Full First");
     manualUpdateRequested = true;
-    updateSortStatus();
+    printList();
 }
 
 void MainWindow::sortByPriorityAsc() {
@@ -814,7 +839,7 @@ void MainWindow::sortByPriorityAsc() {
     }
     sortButton->setText("Priority (A-Z)");
     manualUpdateRequested = true;
-    updateSortStatus();
+    printList();
 }
 
 void MainWindow::sortByPriorityDesc() {
@@ -831,7 +856,7 @@ void MainWindow::sortByPriorityDesc() {
     }
     sortButton->setText("Priority (Z-A)");
     manualUpdateRequested = true;
-    updateSortStatus();
+    printList();
 }
 
 void MainWindow::sortByClassificationAsc() {
@@ -848,7 +873,7 @@ void MainWindow::sortByClassificationAsc() {
     }
     sortButton->setText("Classification (A-Z)");
     manualUpdateRequested = true;
-    updateSortStatus();
+    printList();
 }
 
 void MainWindow::sortByClassificationDesc() {
@@ -865,7 +890,7 @@ void MainWindow::sortByClassificationDesc() {
     }
     sortButton->setText("Classification (Z-A)");
     manualUpdateRequested = true;
-    updateSortStatus();
+    printList();
 }
 
 void MainWindow::sortByDistanceAsc() {
@@ -882,7 +907,7 @@ void MainWindow::sortByDistanceAsc() {
     }
     sortButton->setText("Distance: Closest First");
     manualUpdateRequested = true;
-    updateSortStatus();
+    printList();
 }
 
 void MainWindow::sortByDistanceDesc() {
@@ -899,7 +924,7 @@ void MainWindow::sortByDistanceDesc() {
     }
     sortButton->setText("Distance: Farthest First");
     manualUpdateRequested = true;
-    updateSortStatus();
+    printList();
 }
 
 // --- Display Logic  ---
