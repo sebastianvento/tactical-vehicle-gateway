@@ -17,9 +17,9 @@ struct TacticalVehicle {
     QString type;            ///< Specific vehicle model or designation
     QString classification;  ///< Broad asset category
     QString affiliation;     ///< Hostility status (Friendly, Hostile, Neutral, Unknown)
-    QString priority;        ///< Strategic priority level
-    QString domain;          ///< Operational environment (Land, Sea, Air, etc.)
-    QString propulsion;      ///< Locomotion method (Wheeled, Tracked, etc.)
+    QString priority;        ///< Strategic priority level (Flash (Immediate), High (Operational), Routine, Low (Deferred))
+    QString domain;          ///< Operational environment (Land, Sea, Air, Subsurface, Space, Cyber/Electronic)
+    QString propulsion;      ///< Locomotion method (Wheeled, Tracked, Legged, Aerial, Maritime)
 
     // --- Technical Specifications ---
     int protectionLevel = 0; ///< STANAG 4569 ballistic protection level (1–6)

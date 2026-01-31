@@ -122,11 +122,11 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     stratGrid->addWidget(new QLabel("Locomotion Type:"), 1, 0);
     propulsionButton = new QPushButton("Select Type");
     propulsionMenu = new QMenu(this);
-    propulsionMenu->addAction("Wheeled (High Mobility)");
-    propulsionMenu->addAction("Tracked (Heavy Terrain)");
-    propulsionMenu->addAction("Articulated (All-Terrain)");
-    propulsionMenu->addAction("Amphibious");
-    propulsionMenu->addAction("Rotary-Wing / VTOL");
+    propulsionMenu->addAction("Wheeled");
+    propulsionMenu->addAction("Tracked");
+    propulsionMenu->addAction("Legged");
+    propulsionMenu->addAction("Aerial");
+    propulsionMenu->addAction("Maritime");
     propulsionButton->setMenu(propulsionMenu);
     stratGrid->addWidget(propulsionButton, 1, 1);
     stratGrid->addWidget(propulsionSelectionPressed_Btn = new QPushButton(), 1, 2);
@@ -463,10 +463,10 @@ void MainWindow::filtersCleared() {
     protectionButtonMax->setText("Max Level");
 
     // --- Telemetry Ranges ---
-    fuelInputMin->setText("0%");
-    fuelInputMax->setText("100%");
+    fuelInputMin->setText("0");
+    fuelInputMax->setText("100");
     fuelSlider->setValues(0, 100);
-    distanceInputMin->setText("0 m");
+    distanceInputMin->setText("0");
     distanceInputMax->setText("MAX (No Limit)");
     distanceSlider->setValues(0, 10000);
 
@@ -579,7 +579,7 @@ void MainWindow::propulsionActionClicked(QAction* action) {
 
 void MainWindow::propulsionSelectionPressed() {
     propulsionSelectionPressed_Btn->setVisible(false);
-    propulsionButton->setText("Select Propulsion");
+    propulsionButton->setText("Select Type");
     filterFunction();
 }
 
@@ -756,6 +756,7 @@ void MainWindow::fuelInputMinChanged(const QString &fuelString) {
 
 void MainWindow::fuelInputMaxChanged(const QString &fuelString) {
     if (fuelInputMax->signalsBlocked()) return;
+
     fuelSlider->blockSignals(true);
     if (fuelString.isEmpty()) {
         fuelSlider->setValues(fuelSlider->lowerValue(), 100);
@@ -780,7 +781,7 @@ void MainWindow::onSimulationTick() {
         if (sortButton->text() == "Distance: Closest First") {
             sortByDistanceAsc();
         }
-        if (sortButton->text() == "Distance: Farthest First") {
+        else if (sortButton->text() == "Distance: Farthest First") {
             sortByDistanceDesc();
         } else {
             printList();
@@ -797,11 +798,10 @@ void MainWindow::sortByFuelAsc() {
     auto& fv = controller->filteredVehicles;
     auto& av = tacticalVehicleDb->vehiclesMutable();
 
-    if (displayButton->text().contains("(" + QString::number(fv.size()) + ")") && fv.size() != av.size()) {
+    if (controller->isFilterActive()) {
         std::sort(fv.begin(), fv.end(), TacticalVehicleData::sortByFuelAsc);
     } else {
         std::sort(av.begin(), av.end(), [](const auto& a, const auto& b) { return TacticalVehicleData::sortByFuelAsc(&a, &b); });
-        filterFunction();
     }
     sortButton->setText("Fuel: Critical First");
     manualUpdateRequested = true;
@@ -814,11 +814,10 @@ void MainWindow::sortByFuelDesc() {
     auto& fv = controller->filteredVehicles;
     auto& av = tacticalVehicleDb->vehiclesMutable();
 
-    if (displayButton->text().contains("(" + QString::number(fv.size()) + ")") && fv.size() != av.size()) {
+    if (controller->isFilterActive()) {
         std::sort(fv.begin(), fv.end(), TacticalVehicleData::sortByFuelDesc);
     } else {
         std::sort(av.begin(), av.end(), [](const auto& a, const auto& b) { return TacticalVehicleData::sortByFuelDesc(&a, &b); });
-        filterFunction();
     }
     sortButton->setText("Fuel: Full First");
     manualUpdateRequested = true;
@@ -831,11 +830,10 @@ void MainWindow::sortByPriorityAsc() {
     auto& fv = controller->filteredVehicles;
     auto& av = tacticalVehicleDb->vehiclesMutable();
 
-    if (displayButton->text().contains("(" + QString::number(fv.size()) + ")") && fv.size() != av.size()) {
+    if (controller->isFilterActive()) {
         std::sort(fv.begin(), fv.end(), TacticalVehicleData::sortByPriorityAsc);
     } else {
         std::sort(av.begin(), av.end(), [](const auto& a, const auto& b) { return TacticalVehicleData::sortByPriorityAsc(&a, &b); });
-        filterFunction();
     }
     sortButton->setText("Priority (A-Z)");
     manualUpdateRequested = true;
@@ -848,11 +846,10 @@ void MainWindow::sortByPriorityDesc() {
     auto& fv = controller->filteredVehicles;
     auto& av = tacticalVehicleDb->vehiclesMutable();
 
-    if (displayButton->text().contains("(" + QString::number(fv.size()) + ")") && fv.size() != av.size()) {
+    if (controller->isFilterActive()) {
         std::sort(fv.begin(), fv.end(), TacticalVehicleData::sortByPriorityDesc);
     } else {
         std::sort(av.begin(), av.end(), [](const auto& a, const auto& b) { return TacticalVehicleData::sortByPriorityDesc(&a, &b); });
-        filterFunction();
     }
     sortButton->setText("Priority (Z-A)");
     manualUpdateRequested = true;
@@ -865,11 +862,10 @@ void MainWindow::sortByClassificationAsc() {
     auto& fv = controller->filteredVehicles;
     auto& av = tacticalVehicleDb->vehiclesMutable();
 
-    if (displayButton->text().contains("(" + QString::number(fv.size()) + ")") && fv.size() != av.size()) {
+    if (controller->isFilterActive()) {
         std::sort(fv.begin(), fv.end(), TacticalVehicleData::sortByClassificationAsc);
     } else {
         std::sort(av.begin(), av.end(), [](const auto& a, const auto& b) { return TacticalVehicleData::sortByClassificationAsc(&a, &b); });
-        filterFunction();
     }
     sortButton->setText("Classification (A-Z)");
     manualUpdateRequested = true;
@@ -882,11 +878,10 @@ void MainWindow::sortByClassificationDesc() {
     auto& fv = controller->filteredVehicles;
     auto& av = tacticalVehicleDb->vehiclesMutable();
 
-    if (displayButton->text().contains("(" + QString::number(fv.size()) + ")") && fv.size() != av.size()) {
+    if (controller->isFilterActive()) {
         std::sort(fv.begin(), fv.end(), TacticalVehicleData::sortByClassificationDesc);
     } else {
         std::sort(av.begin(), av.end(), [](const auto& a, const auto& b) { return TacticalVehicleData::sortByClassificationDesc(&a, &b); });
-        filterFunction();
     }
     sortButton->setText("Classification (Z-A)");
     manualUpdateRequested = true;
@@ -899,11 +894,10 @@ void MainWindow::sortByDistanceAsc() {
     auto& fv = controller->filteredVehicles;
     auto& av = tacticalVehicleDb->vehiclesMutable();
 
-    if (displayButton->text().contains("(" + QString::number(fv.size()) + ")") && fv.size() != av.size()) {
+    if (controller->isFilterActive()) {
         std::sort(fv.begin(), fv.end(), TacticalVehicleData::sortByDistanceAsc);
     } else {
         std::sort(av.begin(), av.end(), [](const auto& a, const auto& b) { return TacticalVehicleData::sortByDistanceAsc(&a, &b); });
-        filterFunction();
     }
     sortButton->setText("Distance: Closest First");
     manualUpdateRequested = true;
@@ -916,11 +910,10 @@ void MainWindow::sortByDistanceDesc() {
     auto& fv = controller->filteredVehicles;
     auto& av = tacticalVehicleDb->vehiclesMutable();
 
-    if (displayButton->text().contains("(" + QString::number(fv.size()) + ")") && fv.size() != av.size()) {
+    if (controller->isFilterActive()) {
         std::sort(fv.begin(), fv.end(), TacticalVehicleData::sortByDistanceDesc);
     } else {
         std::sort(av.begin(), av.end(), [](const auto& a, const auto& b) { return TacticalVehicleData::sortByDistanceDesc(&a, &b); });
-        filterFunction();
     }
     sortButton->setText("Distance: Farthest First");
     manualUpdateRequested = true;
@@ -1112,6 +1105,8 @@ void MainWindow::listItemDoubleclicked(QListWidgetItem *item) {
         }
     }
     connect(simTimer, &QTimer::timeout, entityDialog, [=]() {
+        if (!entityDialog || !entityDialog->isVisible()) return;
+
         for (const auto &vehicleUpdate : tacticalVehicleDb->vehicles()) {
             if (vehicleUpdate.callsign == extractedCallsign && entityLiveUpdatesBox->isChecked()) {
                 distanceItem->setText("Distance to target: " +QString::number(vehicleUpdate.distanceToTarget, 'f', 0) + " m");
